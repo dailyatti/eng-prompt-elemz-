@@ -705,11 +705,14 @@ Create a PhD-level, professional NBA/basketball betting analysis prompt.
     isLoading: isLoadingMore,
     loadMore,
     visibleCount,
-    totalCount
+    totalCount,
+    loadMoreRef
   } = useLazyLoading(filteredPrompts, {
     initialCount: 6,
     increment: 4,
-    delay: 300
+    delay: 300,
+    threshold: 0.1,
+    rootMargin: '100px'
   });
 
   if (isGenerating) {
@@ -1001,28 +1004,30 @@ Create a PhD-level, professional NBA/basketball betting analysis prompt.
               ))}
             </div>
             
-            {/* Load More Button */}
+            {/* Load More Button - Auto-loading with Intersection Observer */}
             {hasMore && (
-              <div className="text-center mt-12 animate-fade-in-up">
-                <button
-                  onClick={loadMore}
-                  disabled={isLoadingMore}
-                  className={`px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-500 disabled:to-gray-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-3 mx-auto ${
-                    isLoadingMore ? 'cursor-not-allowed opacity-75' : ''
-                  }`}
-                >
-                  {isLoadingMore ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Loading more...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles size={20} />
-                      Load More Prompts ({totalCount - visibleCount} remaining)
-                    </>
-                  )}
-                </button>
+              <div 
+                ref={loadMoreRef}
+                className="text-center mt-12 animate-fade-in-up"
+              >
+                {isLoadingMore ? (
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                    <span className={`font-medium transition-colors duration-300 ${
+                      darkMode ? 'text-gray-300' : 'text-gray-700'
+                    }`}>
+                      Loading more prompts...
+                    </span>
+                  </div>
+                ) : (
+                  <button
+                    onClick={loadMore}
+                    className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-3 mx-auto"
+                  >
+                    <Sparkles size={20} />
+                    Load More Prompts ({totalCount - visibleCount} remaining)
+                  </button>
+                )}
                 <p className={`mt-3 text-sm font-medium transition-colors duration-300 ${
                   darkMode ? 'text-gray-400' : 'text-gray-600'
                 }`}>
