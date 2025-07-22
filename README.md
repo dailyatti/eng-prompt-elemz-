@@ -120,6 +120,21 @@ npm run dev
 npm run build
 ```
 
+5. **Deploy to Netlify**
+```bash
+# Option 1: Connect GitHub repository to Netlify
+# - Go to netlify.com and sign up/login
+# - Click "New site from Git"
+# - Connect your GitHub account
+# - Select this repository
+# - Build command: npm run build
+# - Publish directory: dist
+
+# Option 2: Deploy manually
+npm run build
+# Then drag the 'dist' folder to Netlify dashboard
+```
+
 ## 🎮 Usage
 
 ### Basic Usage
