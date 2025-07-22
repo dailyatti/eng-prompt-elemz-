@@ -14,7 +14,7 @@ export const initialPrompts: Prompt[] = [
 ⏰ **SEARCH FOR TODAY'S OR TOMORROW'S TIPS:**
 
 📅 **TIME PRIORITY:**
-1️⃣ **FIRST PRIORITY: TODAY'S matches** - ${new Date().toLocaleDateString('en-US')}
+1️⃣ **FIRST PRIORITY: TODAY'S matches**
 2️⃣ **Second priority: Tomorrow's programs**
 3️⃣ **Third priority: Next day (only if necessary)**
 
@@ -896,7 +896,7 @@ CONFIDENCE RATING: [1-100] based on data quality and model reliability`,
 ⏰ **SEARCH FOR TODAY'S OR TOMORROW'S TIPS:**
 
 📅 **TIME PRIORITY:**
-1️⃣ **FIRST PRIORITY: TODAY'S matches** - ${new Date().toLocaleDateString('en-US')}
+1️⃣ **FIRST PRIORITY: TODAY'S matches**
 2️⃣ **Second priority: Tomorrow's programs**
 3️⃣ **Third priority: Next day (only if necessary)**
 
@@ -987,7 +987,7 @@ For each available market:
 ⏰ **SEARCH FOR TODAY'S OR TOMORROW'S TIPS:**
 
 📅 **TIME PRIORITY:**
-1️⃣ **FIRST PRIORITY: TODAY'S matches** - ${new Date().toLocaleDateString('en-US')}
+1️⃣ **FIRST PRIORITY: TODAY'S matches**
 2️⃣ **Second priority: Tomorrow's programs**
 3️⃣ **Third priority: Next day (only if necessary)**
 
