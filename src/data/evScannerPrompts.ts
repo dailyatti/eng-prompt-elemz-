@@ -1,6 +1,6 @@
 export const basketballEVScanner = `🏀 **BASKETBALL EV SCANNER - PhD Level Analysis**
 
-⏰ **SEARCH FOR TODAY'S OR TOMORROW'S MATCHES:**
+⏰ **SEARCH FOR TODAY'S AND TOMORROW'S MATCHES:**
 
 📅 **TIME PRIORITY:**
 1️⃣ **FIRST PRIORITY: TODAY'S NBA/EuroLeague matches**
@@ -73,7 +73,7 @@ export const basketballEVScanner = `🏀 **BASKETBALL EV SCANNER - PhD Level Ana
 
 export const footballEVScanner = `⚽ **FOOTBALL EV SCANNER - PhD Level Analysis**
 
-⏰ **SEARCH FOR TODAY'S OR TOMORROW'S MATCHES:**
+⏰ **SEARCH FOR TODAY'S AND TOMORROW'S MATCHES:**
 
 📅 **TIME PRIORITY:**
 1️⃣ **FIRST PRIORITY: TODAY'S matches**
@@ -144,7 +144,7 @@ export const footballEVScanner = `⚽ **FOOTBALL EV SCANNER - PhD Level Analysis
 
 export const tennisEVScanner = `🎾 **TENNIS EV SCANNER - PhD Level Analysis**
 
-⏰ **SEARCH FOR TODAY'S OR TOMORROW'S MATCHES:**
+⏰ **SEARCH FOR TODAY'S AND TOMORROW'S MATCHES:**
 
 📅 **TIME PRIORITY:**
 1️⃣ **FIRST PRIORITY: TODAY'S ATP/WTA matches**
@@ -213,7 +213,7 @@ export const tennisEVScanner = `🎾 **TENNIS EV SCANNER - PhD Level Analysis**
 
 export const americanFootballEVScanner = `🏈 **AMERICAN FOOTBALL EV SCANNER - PhD Level Analysis**
 
-⏰ **SEARCH FOR TODAY'S OR TOMORROW'S MATCHES:**
+⏰ **SEARCH FOR TODAY'S AND TOMORROW'S MATCHES:**
 
 📅 **TIME PRIORITY:**
 1️⃣ **FIRST PRIORITY: TODAY'S NFL matches**
@@ -280,7 +280,7 @@ export const americanFootballEVScanner = `🏈 **AMERICAN FOOTBALL EV SCANNER - 
 
 export const generalEVScanner = `🎯 **GENERAL SPORTS EV SCANNER - PhD Level Analysis**
 
-⏰ **SEARCH FOR TODAY'S OR TOMORROW'S MATCHES:**
+⏰ **SEARCH FOR TODAY'S AND TOMORROW'S MATCHES:**
 
 📅 **TIME PRIORITY:**
 1️⃣ **FIRST PRIORITY: TODAY'S matches**
