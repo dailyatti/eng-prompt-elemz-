@@ -78,7 +78,7 @@ export function AnalyticsModal({ isOpen, onClose, prompt, onUpdateSuccess }: Ana
                   <span className="font-semibold text-orange-800">Last Used</span>
                 </div>
                 <div className="text-sm font-bold text-orange-900">
-                  {new Date(analytics.lastUsed).toLocaleDateString()}
+                  {new Date(analytics.lastUsed).toLocaleDateString('en-US')}
                 </div>
               </div>
             </div>

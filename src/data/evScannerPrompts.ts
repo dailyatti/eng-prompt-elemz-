@@ -1,11 +1,11 @@
 export const basketballEVScanner = `🏀 **BASKETBALL EV SCANNER - PhD Level Analysis**
 
-⏰ **KERES MAI VAGY HOLNAPI MÉRKŐZÉSEKET:**
+⏰ **SEARCH FOR TODAY'S OR TOMORROW'S MATCHES:**
 
-📅 **IDŐPONT PRIORITÁS:**
-1️⃣ **ELSŐSORBAN MAI NBA/EuroLeague meccsek** - ${new Date().toLocaleDateString('hu-HU')}
-2️⃣ **Másodsorban holnapi programok**
-3️⃣ **Harmadsorban következő nap (csak ha szükséges)**
+📅 **TIME PRIORITY:**
+1️⃣ **FIRST PRIORITY: TODAY'S NBA/EuroLeague matches** - ${new Date().toLocaleDateString('en-US')}
+2️⃣ **Second priority: Tomorrow's programs**
+3️⃣ **Third priority: Next day (only if necessary)**
 
 📅 **Schedule Priority:**
 - Main focus: TODAY'S slate (NBA prime time, EuroLeague)
@@ -73,12 +73,12 @@ export const basketballEVScanner = `🏀 **BASKETBALL EV SCANNER - PhD Level Ana
 
 export const footballEVScanner = `⚽ **FOOTBALL EV SCANNER - PhD Level Analysis**
 
-⏰ **KERES MAI VAGY HOLNAPI MÉRKŐZÉSEKET:**
+⏰ **SEARCH FOR TODAY'S OR TOMORROW'S MATCHES:**
 
-📅 **IDŐPONT PRIORITÁS:**
-1️⃣ **ELSŐSORBAN MAI meccsek** - ${new Date().toLocaleDateString('hu-HU')}
-2️⃣ **Másodsorban holnapi programok**
-3️⃣ **Harmadsorban következő nap (csak ha szükséges)**
+📅 **TIME PRIORITY:**
+1️⃣ **FIRST PRIORITY: TODAY'S matches** - ${new Date().toLocaleDateString('en-US')}
+2️⃣ **Second priority: Tomorrow's programs**
+3️⃣ **Third priority: Next day (only if necessary)**
 
 🏆 **TARGET LEAGUES:**
 - Premier League
@@ -144,12 +144,12 @@ export const footballEVScanner = `⚽ **FOOTBALL EV SCANNER - PhD Level Analysis
 
 export const tennisEVScanner = `🎾 **TENNIS EV SCANNER - PhD Level Analysis**
 
-⏰ **KERES MAI VAGY HOLNAPI MÉRKŐZÉSEKET:**
+⏰ **SEARCH FOR TODAY'S OR TOMORROW'S MATCHES:**
 
-📅 **IDŐPONT PRIORITÁS:**
-1️⃣ **ELSŐSORBAN MAI ATP/WTA meccsek** - ${new Date().toLocaleDateString('hu-HU')}
-2️⃣ **Másodsorban holnapi programok**
-3️⃣ **Harmadsorban következő nap (csak ha szükséges)**
+📅 **TIME PRIORITY:**
+1️⃣ **FIRST PRIORITY: TODAY'S ATP/WTA matches** - ${new Date().toLocaleDateString('en-US')}
+2️⃣ **Second priority: Tomorrow's programs**
+3️⃣ **Third priority: Next day (only if necessary)**
 
 🏆 **TARGET TOURNAMENTS:**
 - ATP Tour events
@@ -213,12 +213,12 @@ export const tennisEVScanner = `🎾 **TENNIS EV SCANNER - PhD Level Analysis**
 
 export const americanFootballEVScanner = `🏈 **AMERICAN FOOTBALL EV SCANNER - PhD Level Analysis**
 
-⏰ **KERES MAI VAGY HOLNAPI MÉRKŐZÉSEKET:**
+⏰ **SEARCH FOR TODAY'S OR TOMORROW'S MATCHES:**
 
-📅 **IDŐPONT PRIORITÁS:**
-1️⃣ **ELSŐSORBAN MAI NFL meccsek** - ${new Date().toLocaleDateString('hu-HU')}
-2️⃣ **Másodsorban holnapi programok**
-3️⃣ **Harmadsorban következő nap (csak ha szükséges)**
+📅 **TIME PRIORITY:**
+1️⃣ **FIRST PRIORITY: TODAY'S NFL matches** - ${new Date().toLocaleDateString('en-US')}
+2️⃣ **Second priority: Tomorrow's programs**
+3️⃣ **Third priority: Next day (only if necessary)**
 
 🏆 **TARGET LEAGUES:**
 - NFL (National Football League)
@@ -280,12 +280,12 @@ export const americanFootballEVScanner = `🏈 **AMERICAN FOOTBALL EV SCANNER - 
 
 export const generalEVScanner = `🎯 **GENERAL SPORTS EV SCANNER - PhD Level Analysis**
 
-⏰ **KERES MAI VAGY HOLNAPI MÉRKŐZÉSEKET:**
+⏰ **SEARCH FOR TODAY'S OR TOMORROW'S MATCHES:**
 
-📅 **IDŐPONT PRIORITÁS:**
-1️⃣ **ELSŐSORBAN MAI meccsek** - ${new Date().toLocaleDateString('hu-HU')}
-2️⃣ **Másodsorban holnapi programok**
-3️⃣ **Harmadsorban következő nap (csak ha szükséges)**
+📅 **TIME PRIORITY:**
+1️⃣ **FIRST PRIORITY: TODAY'S matches** - ${new Date().toLocaleDateString('en-US')}
+2️⃣ **Second priority: Tomorrow's programs**
+3️⃣ **Third priority: Next day (only if necessary)**
 
 🏆 **TARGET SPORTS:**
 - All major sports and leagues
