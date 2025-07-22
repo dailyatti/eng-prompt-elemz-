@@ -9,50 +9,64 @@ export const initialPrompts: Prompt[] = [
     category: 'traditional',
     type: 'general',
     tags: ['weather', 'form', 'statistics', 'injuries', 'motivation'],
-    content: `You are a PhD-level sports betting analyst specializing in football (soccer) with expertise in advanced statistical modeling, Expected Goals (xG) analysis, and probability theory.
+    content: `⚽ **FOOTBALL EV SCANNER - PhD Level Analysis**
 
-COMPREHENSIVE MATCH ANALYSIS FRAMEWORK:
+⏰ **SEARCH FOR TODAY'S OR TOMORROW'S TIPS:**
 
-1. TEAM FORM & PERFORMANCE METRICS:
-   - Last 10 matches: W-D-L record, goals scored/conceded
-   - Home/Away form split analysis
-   - Expected Goals (xG) vs Actual Goals differential
-   - Shot conversion rates and defensive efficiency
-   - Recent head-to-head record (last 5 meetings)
+📅 **TIME PRIORITY:**
+1️⃣ **FIRST PRIORITY: TODAY'S matches** - ${new Date().toLocaleDateString('en-US')}
+2️⃣ **Second priority: Tomorrow's programs**
+3️⃣ **Third priority: Next day (only if necessary)**
 
-2. STATISTICAL MODELING:
-   - Poisson distribution for goal prediction
-   - Elo rating system calculations
-   - Team strength ratings (attack/defense)
-   - Market efficiency analysis vs true probabilities
+🏆 **TARGET LEAGUES:**
+- Premier League, La Liga, Bundesliga, Serie A, Ligue 1
+- Champions League, Europa League, National cups
+- All major European and international competitions
 
-3. CONTEXTUAL FACTORS:
-   - Weather conditions (temperature, wind, precipitation)
-   - Pitch conditions and stadium characteristics
-   - Team motivation (league position, European qualification, relegation battle)
-   - Fixture congestion and rotation policies
-   - Derby/rivalry intensity factor
+📊 **COMPREHENSIVE ANALYSIS FRAMEWORK:**
 
-4. INJURY & SUSPENSION ANALYSIS:
-   - Key player availability (impact rating 1-10)
-   - Tactical system disruption assessment
-   - Replacement player quality differential
+**1. TEAM FORM & PERFORMANCE METRICS:**
+- Last 10 matches: W-D-L record, goals scored/conceded
+- Home/Away form split analysis
+- Expected Goals (xG) vs Actual Goals differential
+- Shot conversion rates and defensive efficiency
+- Recent head-to-head record (last 5 meetings)
 
-5. BETTING MARKET ANALYSIS:
-   For each available market, calculate:
-   - Implied probability from odds
-   - True probability using statistical models
-   - Expected Value (EV) = (True Probability × Odds) - 1
-   - Kelly Criterion optimal stake percentage
-   - Confidence interval (90%, 95%, 99%)
+**2. STATISTICAL MODELING:**
+- Poisson distribution for goal prediction
+- Elo rating system calculations
+- Team strength ratings (attack/defense)
+- Market efficiency analysis vs true probabilities
 
-REQUIRED OUTPUT FORMAT:
-- Match prediction with confidence percentage
-- Top 5 highest EV bets ranked by value
-- Risk assessment for each recommendation
-- Detailed mathematical reasoning for each selection
-- Weather impact assessment (if outdoor venue)
-- Key factors that could invalidate the analysis`,
+**3. CONTEXTUAL FACTORS:**
+- Weather conditions (temperature, wind, precipitation)
+- Pitch conditions and stadium characteristics
+- Team motivation (league position, European qualification, relegation battle)
+- Fixture congestion and rotation policies
+- Derby/rivalry intensity factor
+
+**4. INJURY & SUSPENSION ANALYSIS:**
+- Key player availability (impact rating 1-10)
+- Tactical system disruption assessment
+- Replacement player quality differential
+
+**5. BETTING MARKET ANALYSIS:**
+For each available market, calculate:
+- Implied probability from odds
+- True probability using statistical models
+- Expected Value (EV) = (True Probability × Odds) - 1
+- Kelly Criterion optimal stake percentage
+- Confidence interval (90%, 95%, 99%)
+
+**REQUIRED OUTPUT FORMAT:**
+- **Match prediction with confidence percentage**
+- **Top 5 highest EV bets ranked by value**
+- **Risk assessment for each recommendation**
+- **Detailed mathematical reasoning for each selection**
+- **Weather impact assessment (if outdoor venue)**
+- **Key factors that could invalidate the analysis**
+
+**IMPORTANT:** Focus on TODAY'S and TOMORROW'S matches only!`,
     createdAt: '2024-01-15T10:00:00Z',
     updatedAt: '2024-01-15T10:00:00Z',
   },
@@ -877,43 +891,63 @@ CONFIDENCE RATING: [1-100] based on data quality and model reliability`,
     category: 'traditional',
     type: 'general',
     tags: ['surface', 'ranking', 'form', 'head-to-head'],
-    content: `PhD-LEVEL TENNIS BETTING ANALYSIS FRAMEWORK:
+    content: `🎾 **TENNIS EV SCANNER - PhD Level Analysis**
 
-PLAYER PERFORMANCE METRICS:
-1. SURFACE-SPECIFIC ANALYSIS:
-   - Hard court/Clay/Grass win-loss records
-   - Surface-specific ranking and performance trends
-   - Movement and playing style adaptation to surface
-   - Historical performance at current tournament venue
+⏰ **SEARCH FOR TODAY'S OR TOMORROW'S TIPS:**
 
-2. CURRENT FORM ASSESSMENT:
-   - Last 10 matches: W-L record and quality of opposition
-   - Recent tournament results and progression depth
-   - Set win/loss ratios and break point conversion
-   - Physical condition and injury concerns
-   - Match scheduling and travel fatigue
+📅 **TIME PRIORITY:**
+1️⃣ **FIRST PRIORITY: TODAY'S matches** - ${new Date().toLocaleDateString('en-US')}
+2️⃣ **Second priority: Tomorrow's programs**
+3️⃣ **Third priority: Next day (only if necessary)**
 
-3. STATISTICAL MODELING:
-   - Elo rating calculations for tennis
-   - Service game efficiency (hold percentage)
-   - Return game strength (break percentage)
-   - Tiebreak performance statistics
-   - Deciding set record (mental strength indicator)
+🏆 **TARGET TOURNAMENTS:**
+- ATP Tour events, WTA Tour events
+- Grand Slams, ATP/WTA Finals
+- Davis Cup/Fed Cup, National competitions
 
-4. HEAD-TO-HEAD ANALYSIS:
-   - Historical matchup record on all surfaces
-   - Recent meetings and trend analysis
-   - Playing style compatibility/conflicts
-   - Psychological edge assessment
+📊 **COMPREHENSIVE ANALYSIS FRAMEWORK:**
 
-5. CONTEXTUAL FACTORS:
-   - Tournament importance and prize money
-   - Ranking points implications
-   - Weather conditions (wind, temperature, humidity)
-   - Court speed and bounce characteristics
-   - Time of day and scheduling advantages
+**1. PLAYER PERFORMANCE METRICS:**
+- Surface-specific analysis (Hard/Clay/Grass win-loss records)
+- Current form assessment (last 10 matches)
+- Statistical modeling (Elo ratings, service/return efficiency)
+- Head-to-head analysis (historical matchups)
+- Contextual factors (weather, court conditions, scheduling)
 
-BETTING MARKET EVALUATION:
+**2. SURFACE-SPECIFIC ANALYSIS:**
+- Hard court/Clay/Grass win-loss records
+- Surface-specific ranking and performance trends
+- Movement and playing style adaptation to surface
+- Historical performance at current tournament venue
+
+**3. CURRENT FORM ASSESSMENT:**
+- Last 10 matches: W-L record and quality of opposition
+- Recent tournament results and progression depth
+- Set win/loss ratios and break point conversion
+- Physical condition and injury concerns
+- Match scheduling and travel fatigue
+
+**4. STATISTICAL MODELING:**
+- Elo rating calculations for tennis
+- Service game efficiency (hold percentage)
+- Return game strength (break percentage)
+- Tiebreak performance statistics
+- Deciding set record (mental strength indicator)
+
+**5. HEAD-TO-HEAD ANALYSIS:**
+- Historical matchup record on all surfaces
+- Recent meetings and trend analysis
+- Playing style compatibility/conflicts
+- Psychological edge assessment
+
+**6. CONTEXTUAL FACTORS:**
+- Tournament importance and prize money
+- Ranking points implications
+- Weather conditions (wind, temperature, humidity)
+- Court speed and bounce characteristics
+- Time of day and scheduling advantages
+
+**BETTING MARKET EVALUATION:**
 For each available market:
 - Match winner probabilities using multiple models
 - Set betting analysis (2-0, 2-1 scenarios)
@@ -921,19 +955,21 @@ For each available market:
 - Total games over/under modeling
 - First set winner probability
 
-ADVANCED METRICS:
+**ADVANCED METRICS:**
 - Service points won percentage differential
 - Return points won percentage differential
 - Break point conversion rate comparison
 - Unforced error rates under pressure
 - Net approach success rates
 
-OUTPUT REQUIREMENTS:
-- Match prediction with confidence interval
-- Top 3 highest EV betting opportunities
-- Risk-adjusted Kelly Criterion stakes
-- Key performance indicators to monitor live
-- Potential in-play betting triggers`,
+**OUTPUT REQUIREMENTS:**
+- **Match prediction with confidence interval**
+- **Top 3 highest EV betting opportunities**
+- **Risk-adjusted Kelly Criterion stakes**
+- **Key performance indicators to monitor live**
+- **Potential in-play betting triggers**
+
+**IMPORTANT:** Focus on TODAY'S and TOMORROW'S matches only!`,
     createdAt: '2024-01-15T11:00:00Z',
     updatedAt: '2024-01-15T11:00:00Z',
   },
@@ -946,65 +982,94 @@ OUTPUT REQUIREMENTS:
     category: 'traditional',
     type: 'general',
     tags: ['pace', 'efficiency', 'matchups', 'trends'],
-    content: `ADVANCED BASKETBALL BETTING ANALYSIS:
+    content: `🏀 **BASKETBALL EV SCANNER - PhD Level Analysis**
 
-TEAM EFFICIENCY METRICS:
-1. OFFENSIVE ANALYSIS:
-   - Offensive Rating (points per 100 possessions)
-   - Effective Field Goal Percentage (eFG%)
-   - True Shooting Percentage (TS%)
-   - Turnover Rate and Ball Security
-   - Offensive Rebounding Percentage
-   - Free Throw Rate and Efficiency
+⏰ **SEARCH FOR TODAY'S OR TOMORROW'S TIPS:**
 
-2. DEFENSIVE ANALYSIS:
-   - Defensive Rating (points allowed per 100 possessions)
-   - Opponent Field Goal Percentage allowed
-   - Defensive Rebounding Percentage
-   - Steal Rate and Forced Turnovers
-   - Block Rate and Interior Defense
-   - Perimeter Defense (3-point percentage allowed)
+📅 **TIME PRIORITY:**
+1️⃣ **FIRST PRIORITY: TODAY'S matches** - ${new Date().toLocaleDateString('en-US')}
+2️⃣ **Second priority: Tomorrow's programs**
+3️⃣ **Third priority: Next day (only if necessary)**
 
-3. PACE AND STYLE FACTORS:
-   - Possessions per game (pace calculation)
-   - Fast break points and transition efficiency
-   - Half-court offensive efficiency
-   - Bench depth and rotation impact
-   - Fourth quarter performance (clutch situations)
+🏆 **TARGET LEAGUES:**
+- NBA (All teams), EuroLeague, EuroCup
+- National leagues (Spain ACB, Italy Lega, etc.)
+- All major basketball competitions
 
-4. MATCHUP ANALYSIS:
-   - Size advantages in frontcourt/backcourt
-   - Coaching tactical adjustments
-   - Home court advantage quantification
-   - Rest days and back-to-back game impact
-   - Injury report and player availability
+📊 **COMPREHENSIVE ANALYSIS FRAMEWORK:**
 
-5. SITUATIONAL FACTORS:
-   - Conference vs non-conference performance
-   - Performance against ranked opponents
-   - Revenge game scenarios
-   - Playoff implications and motivation
-   - Travel distance and time zone changes
+**1. TEAM EFFICIENCY METRICS:**
+- Offensive analysis (Offensive Rating, eFG%, TS%)
+- Defensive analysis (Defensive Rating, opponent FG% allowed)
+- Pace and style factors (possessions per game, transition efficiency)
+- Matchup analysis (size advantages, coaching adjustments)
+- Situational factors (conference performance, playoff implications)
 
-STATISTICAL MODELING:
+**2. OFFENSIVE ANALYSIS:**
+- Offensive Rating (points per 100 possessions)
+- Effective Field Goal Percentage (eFG%)
+- True Shooting Percentage (TS%)
+- Turnover Rate and Ball Security
+- Offensive Rebounding Percentage
+- Free Throw Rate and Efficiency
+
+**3. DEFENSIVE ANALYSIS:**
+- Defensive Rating (points allowed per 100 possessions)
+- Opponent Field Goal Percentage allowed
+- Defensive Rebounding Percentage
+- Steal Rate and Forced Turnovers
+- Block Rate and Interior Defense
+- Perimeter Defense (3-point percentage allowed)
+
+**4. PACE AND STYLE FACTORS:**
+- Possessions per game (pace calculation)
+- Fast break points and transition efficiency
+- Half-court offensive efficiency
+- Bench depth and rotation impact
+- Fourth quarter performance (clutch situations)
+
+**5. MATCHUP ANALYSIS:**
+- Size advantages in frontcourt/backcourt
+- Coaching tactical adjustments
+- Home court advantage quantification
+- Rest days and back-to-back game impact
+- Injury report and player availability
+
+**6. SITUATIONAL FACTORS:**
+- Conference vs non-conference performance
+- Performance against ranked opponents
+- Revenge game scenarios
+- Playoff implications and motivation
+- Travel distance and time zone changes
+
+**STATISTICAL MODELING:**
 - Pythagorean expectation for win probability
 - Four Factors model (eFG%, TOV%, ORB%, FTR)
 - Adjusted efficiency ratings for strength of schedule
 - Regression analysis for sustainable performance
 - Monte Carlo simulations for score distributions
 
-BETTING MARKETS ANALYSIS:
+**BETTING MARKETS ANALYSIS:**
 - Point spread efficiency using advanced metrics
 - Total points modeling with pace adjustments
 - First half vs second half trends
 - Quarter-by-quarter scoring patterns
 - Player prop correlations and dependencies
 
-INDOOR SPORT CONSIDERATIONS:
+**INDOOR SPORT CONSIDERATIONS:**
 - No weather impact analysis required
 - Focus on venue-specific factors (court dimensions, crowd noise)
 - Referee tendencies and foul calling patterns
-- Arena altitude effects (if applicable)`,
+- Arena altitude effects (if applicable)
+
+**OUTPUT REQUIREMENTS:**
+- **Match prediction with confidence percentage**
+- **Top 5 highest EV bets ranked by value**
+- **Risk assessment for each recommendation**
+- **Detailed mathematical reasoning for each selection**
+- **Key factors that could invalidate the analysis**
+
+**IMPORTANT:** Focus on TODAY'S and TOMORROW'S games only!`,
     createdAt: '2024-01-15T11:30:00Z',
     updatedAt: '2024-01-15T11:30:00Z',
   },
