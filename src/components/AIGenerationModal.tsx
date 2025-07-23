@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { X, Upload, Sparkles, Zap, Image as ImageIcon, Key, Loader2, Clipboard, Eye, EyeOff } from 'lucide-react';
-import { sportsCategories } from '../data/sportsData';
 import { useApiKey } from '../hooks/useLocalStorage';
 
 interface AIGenerationModalProps {
@@ -9,6 +8,30 @@ interface AIGenerationModalProps {
   onGenerate: (matches: any[], sport: string, images?: File[]) => void;
   darkMode?: boolean;
 }
+
+// Direct sports definition to avoid import issues
+const sportsList = [
+  { id: 'football', name: 'Football (Soccer)', icon: '⚽' },
+  { id: 'basketball', name: 'Basketball', icon: '🏀' },
+  { id: 'tennis', name: 'Tennis', icon: '🎾' },
+  { id: 'american-football', name: 'American Football', icon: '🏈' },
+  { id: 'hockey', name: 'Ice Hockey', icon: '🏒' },
+  { id: 'baseball', name: 'Baseball', icon: '⚾' },
+  { id: 'cricket', name: 'Cricket', icon: '🏏' },
+  { id: 'volleyball', name: 'Volleyball', icon: '🏐' },
+  { id: 'handball', name: 'Handball', icon: '🤾' },
+  { id: 'boxing', name: 'Boxing', icon: '🥊' },
+  { id: 'mma', name: 'MMA', icon: '🥋' },
+  { id: 'golf', name: 'Golf', icon: '⛳' },
+  { id: 'rugby', name: 'Rugby', icon: '🏉' },
+  { id: 'horse-racing', name: 'Horse Racing', icon: '🏇' },
+  { id: 'formula1', name: 'Formula 1', icon: '🏎️' },
+  { id: 'fifa', name: 'FIFA', icon: '🎮' },
+  { id: 'lol', name: 'League of Legends', icon: '🎮' },
+  { id: 'cs2', name: 'Counter-Strike 2', icon: '🎮' },
+  { id: 'valorant', name: 'Valorant', icon: '🎮' },
+  { id: 'dota2', name: 'Dota 2', icon: '🎮' },
+];
 
 export function AIGenerationModal({ isOpen, onClose, onGenerate, darkMode }: AIGenerationModalProps) {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
@@ -22,17 +45,11 @@ export function AIGenerationModal({ isOpen, onClose, onGenerate, darkMode }: AIG
   const { apiKey, isValid, saveApiKey, clearApiKey, validateApiKey } = useApiKey();
 
   // Debug logging
-  console.log('sportsCategories:', sportsCategories);
-  console.log('sportsCategories length:', sportsCategories?.length);
+  console.log('sportsList:', sportsList);
+  console.log('sportsList length:', sportsList.length);
 
   // Fallback sports if sportsCategories is empty
-  const availableSports = sportsCategories && sportsCategories.length > 0 ? sportsCategories : [
-    { id: 'football', name: 'Football (Soccer)', category: 'traditional', icon: '⚽' },
-    { id: 'basketball', name: 'Basketball', category: 'traditional', icon: '🏀' },
-    { id: 'tennis', name: 'Tennis', category: 'traditional', icon: '🎾' },
-    { id: 'american-football', name: 'American Football', category: 'traditional', icon: '🏈' },
-    { id: 'hockey', name: 'Ice Hockey', category: 'traditional', icon: '🏒' },
-  ];
+  const availableSports = sportsList;
 
   // Handle clipboard paste
   React.useEffect(() => {
