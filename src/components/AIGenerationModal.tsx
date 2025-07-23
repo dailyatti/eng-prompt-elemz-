@@ -361,20 +361,31 @@ Return a JSON array of matches, each containing:
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className={`relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-lg shadow-xl ${
+      <div className={`relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl shadow-2xl ${
         darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'
       }`}>
         {/* Header */}
         <div className={`flex items-center justify-between p-6 border-b ${
-          darkMode ? 'border-gray-700' : 'border-gray-200'
+          darkMode ? 'border-gray-700 bg-gradient-to-r from-gray-800 to-gray-900' : 'border-gray-200 bg-gradient-to-r from-gray-50 to-white'
         }`}>
           <div className="flex items-center space-x-3">
-            <Sparkles className="w-6 h-6 text-blue-500" />
-            <h2 className="text-xl font-bold">AI Prompt Generation</h2>
+            <div className={`p-2 rounded-lg ${
+              darkMode ? 'bg-blue-600/20' : 'bg-blue-100'
+            }`}>
+              <Sparkles className="w-6 h-6 text-blue-500" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold">AI Prompt Generation</h2>
+              <p className={`text-sm ${
+                darkMode ? 'text-gray-400' : 'text-gray-600'
+              }`}>
+                Upload images to extract match data and generate prompts
+              </p>
+            </div>
           </div>
           <button
             onClick={onClose}
-            className={`p-2 rounded-lg hover:bg-opacity-80 ${
+            className={`p-2 rounded-lg hover:bg-opacity-80 transition-colors ${
               darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
             }`}
           >
@@ -382,34 +393,50 @@ Return a JSON array of matches, each containing:
           </button>
         </div>
 
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-8">
           {/* API Key Section */}
-          <div className={`p-4 rounded-lg border ${
-            darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-gray-50'
+          <div className={`p-6 rounded-xl border ${
+            darkMode ? 'border-gray-700 bg-gray-800/50' : 'border-gray-200 bg-gray-50'
           }`}>
-            <div className="flex items-center space-x-2 mb-3">
-              <Key className="w-5 h-5 text-blue-500" />
-              <h3 className="font-semibold">OpenAI API Key</h3>
-              {isValid && <span className="text-green-500 text-sm">✓ Valid</span>}
+            <div className="flex items-center space-x-2 mb-4">
+              <div className={`p-2 rounded-lg ${
+                darkMode ? 'bg-blue-600/20' : 'bg-blue-100'
+              }`}>
+                <Key className="w-5 h-5 text-blue-500" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg">OpenAI API Key</h3>
+                <p className={`text-sm ${
+                  darkMode ? 'text-gray-400' : 'text-gray-600'
+                }`}>
+                  Required for AI-powered match extraction
+                </p>
+              </div>
+              {isValid && (
+                <div className="ml-auto flex items-center space-x-1 text-green-500">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm font-medium">Valid</span>
+                </div>
+              )}
             </div>
             
-            <div className="flex space-x-2">
+            <div className="flex space-x-3">
               <div className="flex-1 relative">
                 <input
                   type={showApiKey ? 'text' : 'password'}
                   value={tempApiKey}
                   onChange={(e) => setTempApiKey(e.target.value)}
                   placeholder="sk-..."
-                  className={`w-full px-3 py-2 rounded-lg border ${
+                  className={`w-full px-4 py-3 rounded-lg border transition-colors ${
                     darkMode 
-                      ? 'bg-gray-700 border-gray-600 text-white' 
-                      : 'bg-white border-gray-300 text-gray-900'
-                  } ${apiKeyError ? 'border-red-500' : ''}`}
+                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                      : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                  } ${apiKeyError ? 'border-red-500' : ''} focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowApiKey(!showApiKey)}
-                  className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-1 rounded ${
+                  className={`absolute right-3 top-1/2 transform -translate-y-1/2 p-2 rounded-lg transition-colors ${
                     darkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-100'
                   }`}
                 >
@@ -418,7 +445,7 @@ Return a JSON array of matches, each containing:
               </div>
               <button
                 onClick={handleApiKeySave}
-                className={`px-4 py-2 rounded-lg font-medium ${
+                className={`px-6 py-3 rounded-lg font-medium transition-colors ${
                   darkMode 
                     ? 'bg-blue-600 hover:bg-blue-700 text-white' 
                     : 'bg-blue-500 hover:bg-blue-600 text-white'
@@ -428,7 +455,7 @@ Return a JSON array of matches, each containing:
               </button>
               <button
                 onClick={handleApiKeyClear}
-                className={`px-4 py-2 rounded-lg font-medium ${
+                className={`px-6 py-3 rounded-lg font-medium transition-colors ${
                   darkMode 
                     ? 'bg-red-600 hover:bg-red-700 text-white' 
                     : 'bg-red-500 hover:bg-red-600 text-white'
@@ -439,25 +466,36 @@ Return a JSON array of matches, each containing:
             </div>
             
             {apiKeyError && (
-              <p className="text-red-500 text-sm mt-2">{apiKeyError}</p>
+              <div className="mt-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <p className="text-red-600 dark:text-red-400 text-sm">{apiKeyError}</p>
+              </div>
             )}
             
-            <p className="text-sm text-gray-500 mt-2">
-              Your API key is stored locally and never sent to our servers.
+            <p className={`text-sm mt-3 ${
+              darkMode ? 'text-gray-400' : 'text-gray-600'
+            }`}>
+              🔒 Your API key is stored locally and never sent to our servers.
             </p>
           </div>
 
           {/* Sport Selection */}
           <div>
-            <label className="block text-sm font-medium mb-2">Select Sport</label>
+            <label className="block text-sm font-semibold mb-3 flex items-center space-x-2">
+              <div className={`p-1.5 rounded ${
+                darkMode ? 'bg-orange-600/20' : 'bg-orange-100'
+              }`}>
+                <Zap className="w-4 h-4 text-orange-500" />
+              </div>
+              <span>Select Sport</span>
+            </label>
             <select
               value={selectedSport}
               onChange={(e) => setSelectedSport(e.target.value)}
-              className={`w-full px-3 py-2 rounded-lg border ${
+              className={`w-full px-4 py-3 rounded-lg border transition-colors ${
                 darkMode 
                   ? 'bg-gray-700 border-gray-600 text-white' 
                   : 'bg-white border-gray-300 text-gray-900'
-              }`}
+              } focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent`}
             >
               <option value="">Choose a sport...</option>
               {sportsCategories.map((category) => (
@@ -470,7 +508,14 @@ Return a JSON array of matches, each containing:
 
           {/* Image Upload Section */}
           <div>
-            <label className="block text-sm font-medium mb-2">Upload Images</label>
+            <label className="block text-sm font-semibold mb-3 flex items-center space-x-2">
+              <div className={`p-1.5 rounded ${
+                darkMode ? 'bg-green-600/20' : 'bg-green-100'
+              }`}>
+                <ImageIcon className="w-4 h-4 text-green-500" />
+              </div>
+              <span>Upload Images</span>
+            </label>
             <div
               onDrop={handleDrop}
               onDragOver={(e) => {
@@ -478,16 +523,27 @@ Return a JSON array of matches, each containing:
                 setDragOver(true);
               }}
               onDragLeave={() => setDragOver(false)}
-              className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+              className={`border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200 ${
                 dragOver
-                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 scale-[1.02]'
                   : darkMode
-                  ? 'border-gray-600 bg-gray-800'
-                  : 'border-gray-300 bg-gray-50'
+                  ? 'border-gray-600 bg-gray-800/50 hover:border-gray-500'
+                  : 'border-gray-300 bg-gray-50 hover:border-gray-400'
               }`}
             >
-              <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-              <p className="text-sm text-gray-500 mb-2">
+              <div className={`p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center ${
+                darkMode ? 'bg-gray-700' : 'bg-white'
+              }`}>
+                <Upload className="w-8 h-8 text-gray-400" />
+              </div>
+              <h4 className={`font-semibold mb-2 ${
+                darkMode ? 'text-gray-200' : 'text-gray-800'
+              }`}>
+                Drop your images here
+              </h4>
+              <p className={`text-sm mb-4 ${
+                darkMode ? 'text-gray-400' : 'text-gray-600'
+              }`}>
                 Drag and drop images here, or click to select
               </p>
               <input
@@ -500,7 +556,7 @@ Return a JSON array of matches, each containing:
               />
               <label
                 htmlFor="image-upload"
-                className={`inline-block px-4 py-2 rounded-lg font-medium cursor-pointer ${
+                className={`inline-block px-6 py-3 rounded-lg font-medium cursor-pointer transition-colors ${
                   darkMode 
                     ? 'bg-blue-600 hover:bg-blue-700 text-white' 
                     : 'bg-blue-500 hover:bg-blue-600 text-white'
@@ -508,30 +564,62 @@ Return a JSON array of matches, each containing:
               >
                 Select Images
               </label>
-              <p className="text-xs text-gray-400 mt-2">
-                Supports multiple images. Each image can contain multiple matches.
-              </p>
+              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <p className={`text-xs ${
+                  darkMode ? 'text-blue-300' : 'text-blue-700'
+                }`}>
+                  📸 Supports multiple images • 🎯 Each image can contain multiple matches • 🔍 AI extracts all visible data
+                </p>
+              </div>
             </div>
           </div>
 
           {/* Selected Images */}
           {selectedImages.length > 0 && (
-            <div>
-              <h4 className="font-medium mb-2">Selected Images ({selectedImages.length})</h4>
+            <div className={`p-6 rounded-xl border ${
+              darkMode ? 'border-gray-700 bg-gray-800/50' : 'border-gray-200 bg-gray-50'
+            }`}>
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="font-semibold flex items-center space-x-2">
+                  <div className={`p-1.5 rounded ${
+                    darkMode ? 'bg-purple-600/20' : 'bg-purple-100'
+                  }`}>
+                    <ImageIcon className="w-4 h-4 text-purple-500" />
+                  </div>
+                  <span>Selected Images ({selectedImages.length})</span>
+                </h4>
+                <button
+                  onClick={() => setSelectedImages([])}
+                  className={`text-sm px-3 py-1 rounded-lg transition-colors ${
+                    darkMode 
+                      ? 'text-red-400 hover:bg-red-900/20' 
+                      : 'text-red-600 hover:bg-red-50'
+                  }`}
+                >
+                  Clear All
+                </button>
+              </div>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {selectedImages.map((file, index) => (
                   <div key={index} className="relative group">
-                    <img
-                      src={URL.createObjectURL(file)}
-                      alt={`Upload ${index + 1}`}
-                      className="w-full h-24 object-cover rounded-lg"
-                    />
-                    <button
-                      onClick={() => removeImage(index)}
-                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
+                    <div className="aspect-video rounded-lg overflow-hidden border-2 border-transparent group-hover:border-blue-500 transition-colors">
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt={`Upload ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-lg flex items-center justify-center">
+                      <button
+                        onClick={() => removeImage(index)}
+                        className="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <div className="absolute bottom-1 left-1 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
+                      {index + 1}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -539,10 +627,10 @@ Return a JSON array of matches, each containing:
           )}
 
           {/* Generate Button */}
-          <div className="flex justify-end space-x-3">
+          <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
             <button
               onClick={onClose}
-              className={`px-4 py-2 rounded-lg font-medium ${
+              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
                 darkMode 
                   ? 'bg-gray-600 hover:bg-gray-700 text-white' 
                   : 'bg-gray-200 hover:bg-gray-300 text-gray-900'
@@ -553,22 +641,22 @@ Return a JSON array of matches, each containing:
             <button
               onClick={handleGenerate}
               disabled={isGenerating || !isValid || !selectedSport || selectedImages.length === 0}
-              className={`flex items-center space-x-2 px-6 py-2 rounded-lg font-medium ${
+              className={`flex items-center space-x-3 px-8 py-3 rounded-lg font-medium transition-all ${
                 isGenerating || !isValid || !selectedSport || selectedImages.length === 0
                   ? 'bg-gray-400 cursor-not-allowed'
                   : darkMode
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                  : 'bg-blue-500 hover:bg-blue-600 text-white'
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl'
+                  : 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-lg hover:shadow-xl'
               }`}
             >
               {isGenerating ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-5 h-5 animate-spin" />
                   <span>Processing...</span>
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4" />
+                  <Sparkles className="w-5 h-5" />
                   <span>Generate Prompts</span>
                 </>
               )}
