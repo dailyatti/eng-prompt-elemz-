@@ -283,20 +283,59 @@ Return a JSON array of matches, each containing:
 
         console.log(`📊 Raw API response for image ${i + 1}:`, content);
 
-        // Extract JSON from response
-        const jsonMatch = content.match(/\[[\s\S]*\]/);
-        if (jsonMatch) {
+        // Extract JSON from response - multiple patterns
+        let matches: any[] = [];
+        
+        // Try to find JSON array first
+        const jsonArrayMatch = content.match(/\[[\s\S]*\]/);
+        if (jsonArrayMatch) {
           try {
-            const matches = JSON.parse(jsonMatch[0]);
-            console.log(`✅ Extracted ${matches.length} matches from image ${i + 1}:`, matches);
-            allMatches.push(...matches);
+            matches = JSON.parse(jsonArrayMatch[0]);
+            console.log(`✅ Extracted ${matches.length} matches from JSON array for image ${i + 1}:`, matches);
           } catch (parseError) {
-            console.error(`❌ JSON parse error for image ${i + 1}:`, parseError);
-            console.log('Raw content:', content);
+            console.error(`❌ JSON array parse error for image ${i + 1}:`, parseError);
           }
-        } else {
-          console.warn(`⚠️ No JSON array found in response for image ${i + 1}`);
+        }
+        
+        // If no array found, try to find individual JSON objects
+        if (matches.length === 0) {
+          const jsonObjectMatches = content.match(/\{[^{}]*"teamA"[^{}]*\}/g);
+          if (jsonObjectMatches) {
+            try {
+              matches = jsonObjectMatches.map(obj => JSON.parse(obj));
+              console.log(`✅ Extracted ${matches.length} matches from individual JSON objects for image ${i + 1}:`, matches);
+            } catch (parseError) {
+              console.error(`❌ JSON object parse error for image ${i + 1}:`, parseError);
+            }
+          }
+        }
+        
+        // If still no matches, try to extract from text
+        if (matches.length === 0) {
+          console.warn(`⚠️ No JSON found in response for image ${i + 1}, trying text extraction`);
           console.log('Raw content:', content);
+          
+          // Try to extract team names from text
+          const teamMatches = content.match(/([A-Z][a-zA-Z\s]+)\s+vs\s+([A-Z][a-zA-Z\s]+)/g);
+          if (teamMatches) {
+            matches = teamMatches.map(match => {
+              const [teamA, teamB] = match.split(' vs ');
+              return {
+                teamA: teamA.trim(),
+                teamB: teamB.trim(),
+                matchDate: new Date().toISOString().split('T')[0],
+                odds: {}
+              };
+            });
+            console.log(`✅ Extracted ${matches.length} matches from text for image ${i + 1}:`, matches);
+          }
+        }
+        
+        // Add all found matches
+        if (matches.length > 0) {
+          allMatches.push(...matches);
+        } else {
+          console.error(`❌ No matches could be extracted from image ${i + 1}`);
         }
 
       } catch (error) {
