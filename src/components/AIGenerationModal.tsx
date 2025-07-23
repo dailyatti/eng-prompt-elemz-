@@ -1,20 +1,25 @@
 import React, { useState } from 'react';
-import { X, Upload, Sparkles, Zap, Image as ImageIcon, Key, Loader2, Clipboard } from 'lucide-react';
+import { X, Upload, Sparkles, Zap, Image as ImageIcon, Key, Loader2, Clipboard, Eye, EyeOff } from 'lucide-react';
 import { sportsCategories } from '../data/sportsData';
+import { useApiKey } from '../hooks/useLocalStorage';
 
 interface AIGenerationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onGenerate: (matches: any[], sport: string, apiKey: string, images?: File[]) => void;
+  onGenerate: (matches: any[], sport: string, images?: File[]) => void;
   darkMode?: boolean;
 }
 
 export function AIGenerationModal({ isOpen, onClose, onGenerate, darkMode }: AIGenerationModalProps) {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [selectedSport, setSelectedSport] = useState('');
-  const [apiKey, setApiKey] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [showApiKey, setShowApiKey] = useState(false);
+  const [tempApiKey, setTempApiKey] = useState('');
+  const [apiKeyError, setApiKeyError] = useState('');
+  
+  const { apiKey, isValid, saveApiKey, clearApiKey, validateApiKey } = useApiKey();
 
   // Handle clipboard paste
   React.useEffect(() => {
@@ -38,6 +43,14 @@ export function AIGenerationModal({ isOpen, onClose, onGenerate, darkMode }: AIG
     document.addEventListener('paste', handlePaste);
     return () => document.removeEventListener('paste', handlePaste);
   }, [isOpen]);
+
+  // Initialize temp API key when modal opens
+  React.useEffect(() => {
+    if (isOpen) {
+      setTempApiKey(apiKey);
+      setApiKeyError('');
+    }
+  }, [isOpen, apiKey]);
 
   const handleImageUpload = (file: File) => {
     if (file.type.startsWith('image/')) {
@@ -74,8 +87,19 @@ export function AIGenerationModal({ isOpen, onClose, onGenerate, darkMode }: AIG
     });
   };
 
-  const validateApiKey = (key: string): boolean => {
-    return key.startsWith('sk-') && key.length > 20;
+  const handleApiKeySave = () => {
+    const valid = saveApiKey(tempApiKey);
+    if (valid) {
+      setApiKeyError('');
+    } else {
+      setApiKeyError('Invalid API key format. Must start with "sk-" and be at least 20 characters long.');
+    }
+  };
+
+  const handleApiKeyClear = () => {
+    clearApiKey();
+    setTempApiKey('');
+    setApiKeyError('');
   };
 
   const resizeImage = (file: File): Promise<File> => {
@@ -104,12 +128,12 @@ export function AIGenerationModal({ isOpen, onClose, onGenerate, darkMode }: AIG
         
         canvas.toBlob((blob) => {
           if (blob) {
-            const resizedFile = new File([blob], file.name, { type: 'image/jpeg' });
+            const resizedFile = new File([blob], file.name, { type: file.type });
             resolve(resizedFile);
           } else {
             resolve(file);
           }
-        }, 'image/jpeg', 0.8);
+        }, file.type, 0.8);
       };
       
       img.src = URL.createObjectURL(file);
@@ -117,569 +141,438 @@ export function AIGenerationModal({ isOpen, onClose, onGenerate, darkMode }: AIG
   };
 
   const extractMatchesFromImages = async (base64Images: string[], apiKey: string, sport: string) => {
-    if (!validateApiKey(apiKey)) {
-      throw new Error('Invalid API key format. Must start with sk- and be at least 20 characters long.');
-    }
-
-    const imageContent = base64Images.map((image, index) => ({
-      type: "image_url" as const,
-      image_url: {
-        url: image,
-        detail: "high" as const
-      }
-    }));
+    console.log(`🔍 Extracting matches from ${base64Images.length} images for ${sport}`);
     
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "user",
-            content: [
-              {
-                type: "text",
-                text: `🔍 **PRECISE MATCH AND ODDS DATA EXTRACTION**
+    const allMatches: any[] = [];
+    
+    for (let i = 0; i < base64Images.length; i++) {
+      const image = base64Images[i];
+      console.log(`📸 Processing image ${i + 1}/${base64Images.length}`);
+      
+      const prompt = `Analyze this sports betting image and extract ALL matches and their odds data. Look for multiple matches if present.
 
-**CRITICAL: ALL VISIBLE ODDS ACCURATELY!**
-📅 **DATE & TIME:** Read the match date and time precisely  
-🏆 **LEAGUE/COMPETITION:** What competition they're playing in
-📍 **VENUE:** Home/Away, stadium name if visible  
-⚽ **MATCH TYPE:** League, cup, international
+**SPORT:** ${sport}
 
-🎯 **1X2 MARKET (MANDATORY):**
-- Home Win odds (e.g: 1.64)
-- Draw odds (e.g: 4.20) 
-- Away Win odds (e.g: 5.50)
+**EXTRACTION REQUIREMENTS:**
+1. Find ALL matches in the image (there may be multiple)
+2. Extract complete match data for each match
+3. Extract ALL available odds for each match
+4. Maintain data accuracy and completeness
 
-⚽ **GOALS MARKETS (ALL VISIBLE):**
-- Over/Under 0.5, 1.5, 2.5, 3.5 (exact odds: 1.25, 3.90)
-- Specific team goal counts (e.g: England Over 1.5: 1.64)
+**MATCH DATA TO EXTRACT:**
+- Team A vs Team B
+- Match date and time
+- League/tournament name
+- Venue (if visible)
+- Current score (if live match)
+- Match status (if visible)
 
-🔥 **BTTS (BOTH TEAMS TO SCORE):**
-- Yes odds (e.g: 1.82)
-- No odds (e.g: 1.99)
+**ODDS DATA TO EXTRACT:**
+- 1X2 odds (Home/Draw/Away)
+- Both Teams To Score (BTTS)
+- Over/Under goals (0.5, 1.5, 2.0, 2.5, 3.5)
+- Team goals (0.5, 1.5, 2.5)
+- Any other visible odds markets
 
-🏆 **ADVANCEMENT MARKETS:** 
-- Who advances odds (e.g: England 1.30, Italy 3.50)
-
-📐 **COMBINATIONS:**
-- 1X2 + BTTS combinations (e.g: Home and Yes: 3.35)
-- Double Chance: 1X, X2, 12
-
-🎲 **OTHER MARKETS IF VISIBLE:**
-- Asian Handicap, Corners, Cards, Player Props, First Half
-
-📊 **Current Score:** If live match
-⏱️ **Match Status:** Live, Upcoming, HT
-💰 **Bookmaker:** Which bookmaker
-
-**JSON FORMAT - ALL ODDS ACCURATELY:**
-
-[
-  {
-    "teamA": "Team Name A",
-    "teamB": "Team Name B", 
-    "matchDate": "2024-01-15",
-    "matchTime": "20:00",
-    "league": "Premier League",
-    "venue": "Home/Away",
-    "matchStatus": "Upcoming/Live/HT",
-    "currentScore": "1-0",
-    "sport": "${sport}",
-    "odds": {
-      "main1X2": {
-        "home": "1.64",
-        "draw": "4.20",
-        "away": "5.50"
-      },
-      "btts": {
-        "yes": "1.82",
-        "no": "1.99"
-      },
-      "totalGoals": {
-        "over05": "1.03",
-        "under05": "12.00",
-        "over15": "1.25", 
-        "under15": "3.90",
-        "over20": "1.36",
-        "under20": "3.10",
-        "over25": null,
-        "under25": null
-      },
-      "teamAGoals": {
-        "over05": "1.09",
-        "under05": "5.00",
-        "over15": "1.64",
-        "under15": "2.00",
-        "over25": "3.00",
-        "under25": "1.28"
-      },
-      "advancement": {
-        "teamA": "1.30",
-        "teamB": "3.50"
-      },
-      "combinations": {
-        "homeAndBttsYes": "3.35",
-        "drawAndBttsYes": "5.00",
-        "awayAndBttsNo": "9.25"
-      }
-    }
+**OUTPUT FORMAT:**
+Return a JSON array of matches, each containing:
+{
+  "teamA": "Team Name",
+  "teamB": "Team Name", 
+  "matchDate": "YYYY-MM-DD",
+  "matchTime": "HH:MM",
+  "league": "League Name",
+  "venue": "Venue Name",
+  "currentScore": "0-0",
+  "matchStatus": "Not Started",
+  "odds": {
+    "main1X2": {"home": "1.50", "draw": "3.20", "away": "2.10"},
+    "btts": {"yes": "1.80", "no": "2.00"},
+    "totalGoals": {"over05": "1.20", "under05": "4.50", "over15": "1.60", "under15": "2.30", "over25": "2.10", "under25": "1.70"},
+    "teamAGoals": {"over05": "1.40", "under05": "2.80", "over15": "2.20", "under15": "1.65"},
+    "teamBGoals": {"over05": "1.60", "under05": "2.30", "over15": "2.80", "under15": "1.45"}
   }
-]
+}
 
-**🚨 IMPORTANT RULES:**
-1. RETURN ONLY JSON array, no other text!
-2. ALL visible odds accurately, in decimal format (1.64, 4.20)
-3. If no data, give "null" value
-4. Date in YYYY-MM-DD format
-5. Team names exactly as they appear`
-              },
-              ...imageContent
-            ]
-          }
-        ],
-        max_tokens: 8000,
-        temperature: 0.1
-      })
-    });
+**IMPORTANT:** If multiple matches are visible, extract ALL of them. Return an array with each match as a separate object.`;
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => null);
-      const errorMessage = errorData?.error?.message || `${response.status} ${response.statusText}`;
-      throw new Error(`OpenAI API Error: ${errorMessage}`);
-    }
-
-    const data = await response.json();
-    
-    if (!data.choices || !data.choices[0]) {
-      throw new Error('Invalid response from OpenAI API');
-    }
-    
-    const content = data.choices[0]?.message?.content;
-    
-    try {
-      console.log('🔍 AI Response for match extraction:');
-      console.log(content);
-      
-      // Clean response - remove markdown formatting
-      let cleanContent = content.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
-      
-      // METHOD 1: Try direct JSON parse
-      let matches = [];
-      
       try {
-        matches = JSON.parse(cleanContent);
-        if (Array.isArray(matches) && matches.length > 0) {
-          console.log(`✅ DIRECT JSON PARSE SUCCESS: Found ${matches.length} matches`);
-          return validateAndDeduplicateMatches(matches, sport);
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: 'gpt-4-vision-preview',
+            messages: [
+              {
+                role: 'user',
+                content: [
+                  { type: 'text', text: prompt },
+                  {
+                    type: 'image_url',
+                    image_url: {
+                      url: image,
+                      detail: 'high'
+                    }
+                  }
+                ]
+              }
+            ],
+            max_tokens: 4000,
+            temperature: 0.1
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
         }
-      } catch (e) {
-        console.log('❌ Direct JSON parse failed, trying regex...');
-      }
-      
-      // METHOD 2: Extract JSON array with regex
-      const jsonArrayMatch = cleanContent.match(/\[[\s\S]*\]/);
-      if (jsonArrayMatch) {
-        try {
-          matches = JSON.parse(jsonArrayMatch[0]);
-          if (Array.isArray(matches) && matches.length > 0) {
-            console.log(`✅ REGEX JSON PARSE SUCCESS: Found ${matches.length} matches`);
-            return validateAndDeduplicateMatches(matches, sport);
+
+        const data = await response.json();
+        const content = data.choices[0]?.message?.content;
+        
+        if (!content) {
+          throw new Error('No content received from OpenAI API');
+        }
+
+        console.log(`📊 Raw API response for image ${i + 1}:`, content);
+
+        // Extract JSON from response
+        const jsonMatch = content.match(/\[[\s\S]*\]/);
+        if (jsonMatch) {
+          try {
+            const matches = JSON.parse(jsonMatch[0]);
+            console.log(`✅ Extracted ${matches.length} matches from image ${i + 1}:`, matches);
+            allMatches.push(...matches);
+          } catch (parseError) {
+            console.error(`❌ JSON parse error for image ${i + 1}:`, parseError);
+            console.log('Raw content:', content);
           }
-        } catch (e) {
-          console.log('❌ Regex JSON parse failed, trying object extraction...');
+        } else {
+          console.warn(`⚠️ No JSON array found in response for image ${i + 1}`);
+          console.log('Raw content:', content);
         }
+
+      } catch (error) {
+        console.error(`❌ Error processing image ${i + 1}:`, error);
+        throw error;
       }
-      
-      // METHOD 3: Extract individual JSON objects
-      const jsonObjects = cleanContent.match(/\{[^{}]*\}/g);
-      if (jsonObjects && jsonObjects.length > 0) {
-        try {
-          matches = jsonObjects
-            .map(obj => JSON.parse(obj))
-            .filter(match => match.teamA && match.teamB);
-          if (matches.length > 0) {
-            console.log(`✅ OBJECT EXTRACTION SUCCESS: Found ${matches.length} matches`);
-            return validateAndDeduplicateMatches(matches, sport);
-          }
-        } catch (e) {
-          console.log('❌ Object extraction failed, trying text parsing...');
-        }
-      }
-      
-      console.log('❌ ALL JSON PARSING FAILED');
-      throw new Error(`No valid JSON found. AI Response: "${content.substring(0, 500)}..."`);
-      
-    } catch (error) {
-      console.error('❌ EXTRACTION ERROR:', error);
-      console.log('📄 FULL AI RESPONSE:', content);
-      throw new Error(`Failed to extract matches. Details: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
+
+    return allMatches;
   };
 
-  // Helper function to validate and remove duplicates
   const validateAndDeduplicateMatches = (matches: any[], sport: string) => {
-    console.log(`🔍 Validating ${matches.length} raw matches...`);
+    console.log(`🔍 Validating and deduplicating ${matches.length} matches`);
     
-    // Filter valid matches
     const validMatches = matches.filter(match => {
-      if (!match.teamA || !match.teamB) return false;
-      if (typeof match.teamA !== 'string' || typeof match.teamB !== 'string') return false;
-      if (match.teamA.trim().length < 2 || match.teamB.trim().length < 2) return false;
+      // Basic validation
+      if (!match.teamA || !match.teamB) {
+        console.warn(`⚠️ Skipping match with missing teams:`, match);
+        return false;
+      }
+      
+      // Check for duplicate matches (same teams and date)
+      const isDuplicate = matches.some(otherMatch => 
+        otherMatch !== match &&
+        otherMatch.teamA === match.teamA &&
+        otherMatch.teamB === match.teamB &&
+        otherMatch.matchDate === match.matchDate
+      );
+      
+      if (isDuplicate) {
+        console.warn(`⚠️ Skipping duplicate match: ${match.teamA} vs ${match.teamB}`);
+        return false;
+      }
+      
       return true;
     });
-    
-    console.log(`✅ ${validMatches.length} valid matches after filtering`);
-    
-    // Remove duplicates based on team names (case insensitive)
-    const uniqueMatches = [];
-    const seenMatches = new Set();
-    
-    for (const match of validMatches) {
-      const teamA = match.teamA.trim().toLowerCase();
-      const teamB = match.teamB.trim().toLowerCase();
-      
-      // Create unique identifiers (both directions)
-      const id1 = `${teamA}|||${teamB}`;
-      const id2 = `${teamB}|||${teamA}`;
-      
-      if (!seenMatches.has(id1) && !seenMatches.has(id2)) {
-        seenMatches.add(id1);
-        seenMatches.add(id2);
-        
-        // Ensure proper structure
-        uniqueMatches.push({
-          teamA: match.teamA.trim(),
-          teamB: match.teamB.trim(),
-          odds: match.odds || null,
-          sport: sport,
-          league: match.league || null,
-          matchTime: match.matchTime || null
-        });
-      }
-    }
-    
-    console.log(`🎯 FINAL: ${uniqueMatches.length} unique matches`);
-    console.log('Unique matches:', uniqueMatches.map(m => `${m.teamA} vs ${m.teamB}`).join(', '));
-    
-    if (uniqueMatches.length === 0) {
-      throw new Error('No valid unique matches found after deduplication');
-    }
-    
-    return uniqueMatches;
+
+    console.log(`✅ Validated ${validMatches.length} unique matches`);
+    return validMatches;
   };
 
   const handleGenerate = async () => {
-    if (selectedImages.length === 0 || !selectedSport || !apiKey) return;
-
-    if (!validateApiKey(apiKey)) {
-      alert('Invalid API key! Must start with sk- and be at least 20 characters long.');
+    if (!selectedSport) {
+      alert('Please select a sport');
       return;
     }
+
+    if (!isValid) {
+      setApiKeyError('Please enter a valid API key');
+      return;
+    }
+
+    if (selectedImages.length === 0) {
+      alert('Please upload at least one image');
+      return;
+    }
+
     setIsGenerating(true);
-    
+    setApiKeyError('');
+
     try {
-      // Process all images
-      console.log(`🖼️ Processing ${selectedImages.length} images...`);
-      const base64Images: string[] = [];
+      console.log(`🚀 Starting multi-match extraction from ${selectedImages.length} images`);
       
-      for (let i = 0; i < selectedImages.length; i++) {
-        console.log(`📷 Processing image ${i + 1}/${selectedImages.length}: ${selectedImages[i].name}`);
-        const resizedImage = await resizeImage(selectedImages[i]);
-        const base64Image = await convertImageToBase64(resizedImage);
-        base64Images.push(base64Image);
-      }
+      // Resize images for better processing
+      const resizedImages = await Promise.all(selectedImages.map(resizeImage));
+      console.log(`📏 Resized ${resizedImages.length} images`);
       
-      console.log(`🔍 Extracting matches from ${base64Images.length} images...`);
-      const matches = await extractMatchesFromImages(base64Images, apiKey, selectedSport);
+      // Convert to base64
+      const base64Images = await Promise.all(resizedImages.map(convertImageToBase64));
+      console.log(`🔄 Converted ${base64Images.length} images to base64`);
       
-      console.log(`🎯 Found ${matches.length} matches:`, matches);
+      // Extract matches from all images
+      const extractedMatches = await extractMatchesFromImages(base64Images, apiKey, selectedSport);
+      console.log(`📊 Extracted ${extractedMatches.length} total matches from all images`);
       
-      if (matches.length === 0) {
-        throw new Error(`No matches found in the ${selectedImages.length} image(s). Please ensure the images contain visible betting odds or match listings.`);
+      // Validate and deduplicate
+      const validMatches = validateAndDeduplicateMatches(extractedMatches, selectedSport);
+      console.log(`✅ Final valid matches:`, validMatches);
+      
+      if (validMatches.length === 0) {
+        alert('No valid matches found in the uploaded images. Please try with different images.');
+        return;
       }
 
-      console.log(`🚀 Generating ${matches.length} prompts...`);
-      await onGenerate(matches, selectedSport, apiKey, selectedImages);
-      onClose();
-      setSelectedImages([]);
-      setSelectedSport('');
-      setApiKey('');
+             // Generate prompts for all matches
+       await onGenerate(validMatches, selectedSport, selectedImages);
+      
+      // Reset form
+      resetForm();
+      
     } catch (error) {
-      console.error('AI Generation Error:', error);
-      
-      let errorMessage = 'Unknown error occurred';
-      if (error instanceof Error) {
-        if (error.message.includes('401')) {
-          errorMessage = 'Invalid API Key! Please check your OpenAI API key.';
-        } else if (error.message.includes('400')) {
-          errorMessage = 'Bad request! Check image format and API key.';
-        } else if (error.message.includes('429')) {
-          errorMessage = 'API rate limit reached. Please try again later.';
-        } else if (error.message.includes('500')) {
-          errorMessage = 'OpenAI server error. Please try again later.';
-        } else if (error.message.includes('No matches found')) {
-          errorMessage = `No matches detected in image. ${error.message}`;
-        } else {
-          errorMessage = error.message;
-        }
-      }
-      
-      alert(`❌ Error: ${errorMessage}`);
+      console.error('❌ Generation error:', error);
+      setApiKeyError(`Generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsGenerating(false);
     }
   };
 
   const resetForm = () => {
-      onClose();
-      setSelectedImages([]);
-      setSelectedSport('');
-      setApiKey('');
+    setSelectedImages([]);
+    setSelectedSport('');
+    setDragOver(false);
+    setApiKeyError('');
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className={`backdrop-blur-xl rounded-2xl shadow-3xl w-full max-w-4xl max-h-[90vh] overflow-hidden transition-colors duration-300 ${
-        darkMode 
-          ? 'bg-gray-900/95 border border-gray-700/20' 
-          : 'bg-white/95 border border-white/20'
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className={`relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-lg shadow-xl ${
+        darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'
       }`}>
-        <div className={`flex justify-between items-center p-6 transition-colors duration-300 ${
-          darkMode 
-            ? 'border-b border-gray-700/50 bg-gradient-to-r from-purple-900/20 to-pink-900/20' 
-            : 'border-b border-gray-200/50 bg-gradient-to-r from-purple-50 to-pink-50'
+        {/* Header */}
+        <div className={`flex items-center justify-between p-6 border-b ${
+          darkMode ? 'border-gray-700' : 'border-gray-200'
         }`}>
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center gap-3">
-            <Sparkles className="text-purple-600" size={24} />
-            AI Prompt Generation
-          </h2>
-          <button onClick={resetForm} className={`p-2 transition-colors ${
-            darkMode 
-              ? 'text-gray-400 hover:text-gray-200' 
-              : 'text-gray-400 hover:text-gray-600'
-          }`}>
-            <X size={24} />
+          <div className="flex items-center space-x-3">
+            <Sparkles className="w-6 h-6 text-blue-500" />
+            <h2 className="text-xl font-bold">AI Prompt Generation</h2>
+          </div>
+          <button
+            onClick={onClose}
+            className={`p-2 rounded-lg hover:bg-opacity-80 ${
+              darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+            }`}
+          >
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
-          <div className="space-y-6">
-            {/* Image Upload */}
-            <div>
-              <label className={`block text-sm font-bold mb-3 flex items-center gap-2 transition-colors duration-300 ${
-                darkMode ? 'text-gray-200' : 'text-gray-700'
-              }`}>
-                <ImageIcon className="text-purple-600" size={16} />
-                Upload Match Screenshots ({selectedImages.length} selected)
-                <span className={`text-xs font-normal ml-2 transition-colors duration-300 ${
-                  darkMode ? 'text-gray-400' : 'text-gray-500'
-                }`}>
-                  (Drag & drop, file upload, or Ctrl+V)
-                </span>
-              </label>
-              <div
-                className={`border-2 border-dashed rounded-xl p-8 text-center transition-all ${
-                  dragOver 
-                    ? darkMode 
-                      ? 'border-purple-400 bg-purple-900/20' 
-                      : 'border-purple-500 bg-purple-50'
-                    : selectedImages.length > 0
-                      ? darkMode
-                        ? 'border-green-400 bg-green-900/20'
-                        : 'border-green-500 bg-green-50'
-                      : darkMode
-                        ? 'border-gray-600 hover:border-purple-400 bg-gray-800/20'
-                        : 'border-gray-300 hover:border-purple-400'
-                }`}
-                onDrop={handleDrop}
-                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-                onDragLeave={() => setDragOver(false)}
-              >
-                {selectedImages.length > 0 ? (
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-40 overflow-y-auto">
-                      {selectedImages.map((image, index) => (
-                        <div key={index} className="relative group">
-                          <img 
-                            src={URL.createObjectURL(image)} 
-                            alt={`Preview ${index + 1}`}
-                            className="w-full h-20 object-cover rounded-lg shadow-md"
-                          />
-                          <button
-                            onClick={() => removeImage(index)}
-                            className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 text-white rounded-full text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hover:bg-red-600"
-                          >
-                            ×
-                          </button>
-                          <div className="absolute bottom-1 left-1 bg-black/70 text-white text-xs px-1 rounded">
-                            {index + 1}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    <p className={`font-semibold transition-colors duration-300 ${
-                      darkMode ? 'text-green-400' : 'text-green-700'
-                    }`}>
-                      {selectedImages.length} image{selectedImages.length !== 1 ? 's' : ''} selected
-                    </p>
-                    <button
-                      onClick={() => setSelectedImages([])}
-                      className={`font-medium transition-colors ${
-                        darkMode 
-                          ? 'text-red-400 hover:text-red-300' 
-                          : 'text-red-600 hover:text-red-800'
-                      }`}
-                    >
-                      Remove All
-                    </button>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <Upload className={`mx-auto transition-colors duration-300 ${
-                      darkMode ? 'text-gray-500' : 'text-gray-400'
-                    }`} size={48} />
-                    <div>
-                      <p className={`font-medium mb-2 transition-colors duration-300 ${
-                        darkMode ? 'text-gray-300' : 'text-gray-600'
-                      }`}>
-                        Drop your image here, paste with Ctrl+V, or
-                      </p>
-                      <label className="text-purple-600 hover:text-purple-800 font-bold cursor-pointer">
-                        browse files
-                        <input
-                          type="file"
-                          accept="image/*"
-                          multiple
-                          onChange={(e) => e.target.files && handleMultipleImageUpload(e.target.files)}
-                          className="hidden"
-                        />
-                      </label>
-                    </div>
-                    <div className="flex items-center justify-center gap-4 text-xs">
-                      <span className={`transition-colors duration-300 ${
-                        darkMode ? 'text-gray-400' : 'text-gray-500'
-                      }`}>
-                        Supports: JPG, PNG, WebP
-                      </span>
-                      <span className="flex items-center gap-1 text-blue-600">
-                        <Clipboard size={12} />
-                        Ctrl+V to paste
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
+        <div className="p-6 space-y-6">
+          {/* API Key Section */}
+          <div className={`p-4 rounded-lg border ${
+            darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-gray-50'
+          }`}>
+            <div className="flex items-center space-x-2 mb-3">
+              <Key className="w-5 h-5 text-blue-500" />
+              <h3 className="font-semibold">OpenAI API Key</h3>
+              {isValid && <span className="text-green-500 text-sm">✓ Valid</span>}
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Sport Selection */}
-              <div>
-                <label className={`block text-sm font-bold mb-3 flex items-center gap-2 transition-colors duration-300 ${
-                  darkMode ? 'text-gray-200' : 'text-gray-700'
-                }`}>
-                  <Zap className="text-orange-600" size={16} />
-                  Select Sport
-                </label>
-                <select
-                  value={selectedSport}
-                  onChange={(e) => setSelectedSport(e.target.value)}
-                  className={`w-full px-4 py-3 border-2 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all font-medium ${
+            
+            <div className="flex space-x-2">
+              <div className="flex-1 relative">
+                <input
+                  type={showApiKey ? 'text' : 'password'}
+                  value={tempApiKey}
+                  onChange={(e) => setTempApiKey(e.target.value)}
+                  placeholder="sk-..."
+                  className={`w-full px-3 py-2 rounded-lg border ${
                     darkMode 
-                      ? 'bg-gray-800 border-gray-600 text-gray-200' 
-                      : 'bg-white border-gray-200 text-gray-800'
+                      ? 'bg-gray-700 border-gray-600 text-white' 
+                      : 'bg-white border-gray-300 text-gray-900'
+                  } ${apiKeyError ? 'border-red-500' : ''}`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowApiKey(!showApiKey)}
+                  className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-1 rounded ${
+                    darkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-100'
                   }`}
                 >
-                  <option value="">Choose a sport...</option>
-                  {sportsCategories.map((sport) => (
-                    <option key={sport.id} value={sport.id}>
-                      {sport.icon} {sport.name}
-                    </option>
-                  ))}
-                </select>
+                  {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
-
-              {/* API Key */}
-              <div>
-                <label className={`block text-sm font-bold mb-3 flex items-center gap-2 transition-colors duration-300 ${
-                  darkMode ? 'text-gray-200' : 'text-gray-700'
-                }`}>
-                  <Key className="text-red-600" size={16} />
-                  OpenAI API Key
-                </label>
-                <input
-                  type="password"
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                  className={`w-full px-4 py-3 border-2 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all font-medium ${
-                    darkMode 
-                      ? 'bg-gray-800 border-gray-600 text-gray-200 placeholder-gray-400' 
-                      : 'bg-white border-gray-200 text-gray-800 placeholder-gray-400'
-                  }`}
-                  placeholder="sk-proj-... (OpenAI API Key)"
-                />
-                <p className={`text-xs mt-1 transition-colors duration-300 ${
-                  darkMode ? 'text-gray-400' : 'text-gray-500'
-                }`}>
-                  Get your API key from <a href="https://platform.openai.com/api-keys" target="_blank" className="text-blue-500 hover:underline">OpenAI Platform</a>
-                </p>
-              </div>
-            </div>
-
-            {/* AI Features Info */}
-            <div className={`p-4 rounded-xl transition-colors duration-300 ${
-              darkMode 
-                ? 'bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-blue-800/30' 
-                : 'bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200'
-            }`}>
-              <h4 className={`font-bold mb-2 flex items-center gap-2 transition-colors duration-300 ${
-                darkMode ? 'text-gray-200' : 'text-gray-800'
-              }`}>
-                <Sparkles className="text-purple-600" size={16} />
-                Multi-Image Analysis
-              </h4>
-              <div className={`text-sm space-y-2 transition-colors duration-300 ${
-                darkMode ? 'text-gray-300' : 'text-gray-700'
-              }`}>
-                <p>1. 📸 <strong>Upload multiple screenshots</strong> - drag & drop, file picker, or Ctrl+V</p>
-                <p>2. 🏆 <strong>Select sport</strong> - provides context for AI analysis</p>
-                <p>3. 🔑 <strong>OpenAI API key</strong> - secure, not stored permanently</p>
-                <p>4. 🤖 <strong>AI processes ALL images</strong> - extracts matches and complete odds</p>
-                <p>5. 📋 <strong>PhD-level prompts</strong> - detailed analysis with all visible odds included</p>
-                <p>6. ⚡ <strong>Loading screen</strong> - shows progress for multiple matches</p>
-                <p>7. 🎯 <strong>Complete market coverage</strong> - corners, cards, BTTS, totals, handicaps</p>
-              </div>
-            </div>
-
-            {/* Generate Button */}
-            <div className={`flex justify-end pt-6 transition-colors duration-300 ${
-              darkMode ? 'border-t border-gray-700' : 'border-t border-gray-200'
-            }`}>
               <button
-                onClick={handleGenerate}
-                disabled={selectedImages.length === 0 || !selectedSport || !apiKey || isGenerating}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all flex items-center gap-3 disabled:transform-none"
+                onClick={handleApiKeySave}
+                className={`px-4 py-2 rounded-lg font-medium ${
+                  darkMode 
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                    : 'bg-blue-500 hover:bg-blue-600 text-white'
+                }`}
               >
-                {isGenerating ? (
-                  <>
-                    <Loader2 size={20} className="animate-spin" />
-                    Processing {selectedImages.length} images...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles size={20} />
-                    Analyze {selectedImages.length} Image{selectedImages.length !== 1 ? 's' : ''}
-                  </>
-                )}
+                Save
+              </button>
+              <button
+                onClick={handleApiKeyClear}
+                className={`px-4 py-2 rounded-lg font-medium ${
+                  darkMode 
+                    ? 'bg-red-600 hover:bg-red-700 text-white' 
+                    : 'bg-red-500 hover:bg-red-600 text-white'
+                }`}
+              >
+                Clear
               </button>
             </div>
+            
+            {apiKeyError && (
+              <p className="text-red-500 text-sm mt-2">{apiKeyError}</p>
+            )}
+            
+            <p className="text-sm text-gray-500 mt-2">
+              Your API key is stored locally and never sent to our servers.
+            </p>
+          </div>
+
+          {/* Sport Selection */}
+          <div>
+            <label className="block text-sm font-medium mb-2">Select Sport</label>
+            <select
+              value={selectedSport}
+              onChange={(e) => setSelectedSport(e.target.value)}
+              className={`w-full px-3 py-2 rounded-lg border ${
+                darkMode 
+                  ? 'bg-gray-700 border-gray-600 text-white' 
+                  : 'bg-white border-gray-300 text-gray-900'
+              }`}
+            >
+              <option value="">Choose a sport...</option>
+              {sportsCategories.map((category) => (
+                <option key={category.value} value={category.value}>
+                  {category.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Image Upload Section */}
+          <div>
+            <label className="block text-sm font-medium mb-2">Upload Images</label>
+            <div
+              onDrop={handleDrop}
+              onDragOver={(e) => {
+                e.preventDefault();
+                setDragOver(true);
+              }}
+              onDragLeave={() => setDragOver(false)}
+              className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                dragOver
+                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                  : darkMode
+                  ? 'border-gray-600 bg-gray-800'
+                  : 'border-gray-300 bg-gray-50'
+              }`}
+            >
+              <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+              <p className="text-sm text-gray-500 mb-2">
+                Drag and drop images here, or click to select
+              </p>
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={(e) => e.target.files && handleMultipleImageUpload(e.target.files)}
+                className="hidden"
+                id="image-upload"
+              />
+              <label
+                htmlFor="image-upload"
+                className={`inline-block px-4 py-2 rounded-lg font-medium cursor-pointer ${
+                  darkMode 
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                    : 'bg-blue-500 hover:bg-blue-600 text-white'
+                }`}
+              >
+                Select Images
+              </label>
+              <p className="text-xs text-gray-400 mt-2">
+                Supports multiple images. Each image can contain multiple matches.
+              </p>
+            </div>
+          </div>
+
+          {/* Selected Images */}
+          {selectedImages.length > 0 && (
+            <div>
+              <h4 className="font-medium mb-2">Selected Images ({selectedImages.length})</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {selectedImages.map((file, index) => (
+                  <div key={index} className="relative group">
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt={`Upload ${index + 1}`}
+                      className="w-full h-24 object-cover rounded-lg"
+                    />
+                    <button
+                      onClick={() => removeImage(index)}
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Generate Button */}
+          <div className="flex justify-end space-x-3">
+            <button
+              onClick={onClose}
+              className={`px-4 py-2 rounded-lg font-medium ${
+                darkMode 
+                  ? 'bg-gray-600 hover:bg-gray-700 text-white' 
+                  : 'bg-gray-200 hover:bg-gray-300 text-gray-900'
+              }`}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleGenerate}
+              disabled={isGenerating || !isValid || !selectedSport || selectedImages.length === 0}
+              className={`flex items-center space-x-2 px-6 py-2 rounded-lg font-medium ${
+                isGenerating || !isValid || !selectedSport || selectedImages.length === 0
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : darkMode
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                  : 'bg-blue-500 hover:bg-blue-600 text-white'
+              }`}
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Processing...</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4" />
+                  <span>Generate Prompts</span>
+                </>
+              )}
+            </button>
           </div>
         </div>
       </div>

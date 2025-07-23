@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Trophy, Target, Zap, Sparkles, TrendingUp, Award, BarChart3, FileText, Heart, Bot, Moon, Sun } from 'lucide-react';
 import { Prompt } from './types';
-import { useLocalStorage } from './hooks/useLocalStorage';
+import { useLocalStorage, useApiKey } from './hooks/useLocalStorage';
 import { usePromptAnalytics } from './hooks/usePromptAnalytics';
 import { useLazyLoading } from './hooks/useLazyLoading';
 import { initialPrompts } from './data/initialPrompts';
@@ -20,6 +20,7 @@ function App() {
   const [prompts, setPrompts] = useLocalStorage<Prompt[]>('sports-betting-prompts', initialPrompts);
   const [aiPrompts, setAiPrompts] = useLocalStorage<Prompt[]>('ai-generated-prompts', []);
   const [darkMode, setDarkMode] = useLocalStorage<boolean>('dark-mode', false);
+  const { apiKey } = useApiKey();
   const { updateSuccessRate } = usePromptAnalytics();
   const [currentPage, setCurrentPage] = useState<'regular' | 'ai'>('regular');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -198,7 +199,7 @@ function App() {
     setCurrentPage(previousState.currentPage);
   };
 
-  const handleAIGeneration = async (matches: any[], sport: string, apiKey: string, images?: File[]) => {
+  const handleAIGeneration = async (matches: any[], sport: string, images?: File[]) => {
     setIsGenerating(true);
     setGenerationProgress({ current: 0, total: matches.length, currentMatch: '' });
     
@@ -211,7 +212,7 @@ function App() {
         setGenerationProgress({ current: i + 1, total: matches.length, currentMatch: `${match.teamA} vs ${match.teamB}` });
         
         const now = new Date().toISOString();
-        const promptContent = await generateMatchPrompt(match, sport, apiKey);
+        const promptContent = await generateMatchPrompt(match, sport);
         
         const newPrompt: Prompt = {
           id: Math.random().toString(36).substr(2, 9),
@@ -252,7 +253,7 @@ function App() {
     }
   };
 
-  const generateMatchPrompt = async (match: any, sport: string, apiKey: string) => {
+  const generateMatchPrompt = async (match: any, sport: string) => {
     console.log(`🧠 Generating PhD-level prompt for: ${match.teamA} vs ${match.teamB}`);
     
     // Build extracted match data header in English

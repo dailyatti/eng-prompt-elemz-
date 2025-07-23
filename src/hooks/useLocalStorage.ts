@@ -23,3 +23,40 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
 
   return [storedValue, setValue] as const;
 }
+
+// API Key management hook
+export function useApiKey() {
+  const [apiKey, setApiKey] = useLocalStorage<string>('openai-api-key', '');
+  const [isValid, setIsValid] = useState(false);
+
+  const validateApiKey = (key: string): boolean => {
+    return key.startsWith('sk-') && key.length > 20;
+  };
+
+  const saveApiKey = (key: string) => {
+    const valid = validateApiKey(key);
+    setIsValid(valid);
+    if (valid) {
+      setApiKey(key);
+    }
+    return valid;
+  };
+
+  const clearApiKey = () => {
+    setApiKey('');
+    setIsValid(false);
+  };
+
+  // Validate on mount
+  useEffect(() => {
+    setIsValid(validateApiKey(apiKey));
+  }, [apiKey]);
+
+  return {
+    apiKey,
+    isValid,
+    saveApiKey,
+    clearApiKey,
+    validateApiKey
+  };
+}
