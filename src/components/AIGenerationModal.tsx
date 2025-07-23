@@ -492,9 +492,28 @@ Return a JSON array of matches, each containing:
         
         // Show alert with match count
         alert(`Found ${validMatches.length} matches:\n\n${matchList}\n\nGenerating prompts for all matches...`);
+        
+        // Ensure we have valid matches before calling onGenerate
+        const finalMatches = validMatches.filter(match => 
+          match && 
+          match.teamA && 
+          match.teamB && 
+          typeof match.teamA === 'string' && 
+          typeof match.teamB === 'string' &&
+          match.teamA.trim() !== '' && 
+          match.teamB.trim() !== ''
+        );
+        
+        console.log(`✅ Final validated matches for generation: ${finalMatches.length}`, finalMatches);
+        
+        if (finalMatches.length > 0) {
+          await onGenerate(finalMatches, selectedSport, selectedImages);
+        } else {
+          alert('No valid matches could be processed. Please try with different images.');
+        }
+      } else {
+        alert('No valid matches found. Please try with different images.');
       }
-      
-      await onGenerate(validMatches, selectedSport, selectedImages);
       console.log(`✅ onGenerate completed successfully for ${validMatches.length} matches`);
       
       // Reset form

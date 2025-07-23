@@ -224,11 +224,32 @@ function App() {
     
     console.log(`🚀 Starting AI generation for ${matches.length} matches from ${images?.length || 0} images:`, matches);
     
+    // Validate matches array
+    if (!Array.isArray(matches) || matches.length === 0) {
+      console.error('❌ Invalid matches array:', matches);
+      alert('No valid matches found. Please try again with different images.');
+      setIsGenerating(false);
+      return;
+    }
+    
+    // Create a map to ensure each match gets a prompt
+    const matchMap = new Map();
+    matches.forEach((match, index) => {
+      const key = `${match.teamA}_${match.teamB}_${match.matchDate || 'unknown'}`;
+      matchMap.set(key, { ...match, originalIndex: index });
+    });
+    
+    console.log(`🗺️ Created match map with ${matchMap.size} unique matches:`, Array.from(matchMap.keys()));
+    
     try {
-      for (let i = 0; i < matches.length; i++) {
-        const match = matches[i];
-        console.log(`⚙️ Generating prompt ${i + 1}/${matches.length} for: ${match.teamA} vs ${match.teamB}`);
-        setGenerationProgress({ current: i + 1, total: matches.length, currentMatch: `${match.teamA} vs ${match.teamB}` });
+      // Use map to ensure each match gets processed
+      const uniqueMatches = Array.from(matchMap.values());
+      console.log(`🔄 Processing ${uniqueMatches.length} unique matches`);
+      
+      for (let i = 0; i < uniqueMatches.length; i++) {
+        const match = uniqueMatches[i];
+        console.log(`⚙️ Generating prompt ${i + 1}/${uniqueMatches.length} for: ${match.teamA} vs ${match.teamB}`);
+        setGenerationProgress({ current: i + 1, total: uniqueMatches.length, currentMatch: `${match.teamA} vs ${match.teamB}` });
         
         const now = new Date().toISOString();
         const promptContent = await generateMatchPrompt(match, sport);
@@ -260,13 +281,13 @@ function App() {
         });
         
         // Delay between generations
-        if (i < matches.length - 1) {
+        if (i < uniqueMatches.length - 1) {
           console.log(`⏳ Waiting 1 second before next generation...`);
           await new Promise(resolve => setTimeout(resolve, 1000));
         }
       }
       
-      console.log(`🎉 COMPLETED: Generated ${matches.length} prompts successfully`);
+      console.log(`🎉 COMPLETED: Generated ${uniqueMatches.length} prompts successfully`);
       console.log(`🔍 Final AI prompts state:`, aiPrompts);
       
       // Switch to AI page after generation
