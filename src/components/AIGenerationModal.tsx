@@ -21,6 +21,19 @@ export function AIGenerationModal({ isOpen, onClose, onGenerate, darkMode }: AIG
   
   const { apiKey, isValid, saveApiKey, clearApiKey, validateApiKey } = useApiKey();
 
+  // Debug logging
+  console.log('sportsCategories:', sportsCategories);
+  console.log('sportsCategories length:', sportsCategories?.length);
+
+  // Fallback sports if sportsCategories is empty
+  const availableSports = sportsCategories && sportsCategories.length > 0 ? sportsCategories : [
+    { id: 'football', name: 'Football (Soccer)', category: 'traditional', icon: '⚽' },
+    { id: 'basketball', name: 'Basketball', category: 'traditional', icon: '🏀' },
+    { id: 'tennis', name: 'Tennis', category: 'traditional', icon: '🎾' },
+    { id: 'american-football', name: 'American Football', category: 'traditional', icon: '🏈' },
+    { id: 'hockey', name: 'Ice Hockey', category: 'traditional', icon: '🏒' },
+  ];
+
   // Handle clipboard paste
   React.useEffect(() => {
     const handlePaste = async (e: ClipboardEvent) => {
@@ -498,7 +511,7 @@ Return a JSON array of matches, each containing:
               } focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 hover:border-gray-400`}
             >
               <option value="">Choose a sport...</option>
-              {sportsCategories.map((category) => (
+              {availableSports.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.icon} {category.name}
                 </option>
@@ -508,7 +521,7 @@ Return a JSON array of matches, each containing:
               <p className={`text-sm mt-2 ${
                 darkMode ? 'text-green-400' : 'text-green-600'
               }`}>
-                ✓ Selected: {sportsCategories.find(cat => cat.id === selectedSport)?.icon} {sportsCategories.find(cat => cat.id === selectedSport)?.name}
+                ✓ Selected: {availableSports.find(cat => cat.id === selectedSport)?.icon} {availableSports.find(cat => cat.id === selectedSport)?.name}
               </p>
             )}
           </div>
