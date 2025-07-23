@@ -220,18 +220,19 @@ function App() {
   const handleAIGeneration = async (matches: any[], sport: string, images?: File[]) => {
     console.log(`🎯 handleAIGeneration called with ${matches.length} matches:`, matches);
     console.log(`🔍 Detailed matches data:`, JSON.stringify(matches, null, 2));
-    setIsGenerating(true);
-    setGenerationProgress({ current: 0, total: matches.length, currentMatch: '' });
-    
-    console.log(`🚀 Starting AI generation for ${matches.length} matches from ${images?.length || 0} images:`, matches);
     
     // Validate matches array
     if (!Array.isArray(matches) || matches.length === 0) {
       console.error('❌ Invalid matches array:', matches);
       alert('No valid matches found. Please try again with different images.');
-      setIsGenerating(false);
       return;
     }
+    
+    // Start generation with smooth animation
+    setIsGenerating(true);
+    setGenerationProgress({ current: 0, total: matches.length, currentMatch: 'Initializing...' });
+    
+    console.log(`🚀 Starting AI generation for ${matches.length} matches from ${images?.length || 0} images:`, matches);
     
     try {
       // Convert matches to MatchData format and ensure all are processed
@@ -259,15 +260,27 @@ function App() {
       });
       
       console.log(`🎉 COMPLETED: Generated ${generatedPrompts.length} prompts successfully`);
-      console.log(`🔍 Final AI prompts state:`, aiPrompts);
       
-      // Switch to AI page after generation
-      setCurrentPage('ai');
+      // Show success message and automatically switch to AI page
+      setTimeout(() => {
+        setIsGenerating(false);
+        setGenerationProgress({ current: 0, total: 0, currentMatch: '' });
+        
+        // Show success notification
+        const successMessage = `✅ Successfully generated ${generatedPrompts.length} prompts!\n\nSwitching to AI Prompts page...`;
+        console.log(successMessage);
+        
+        // Automatically switch to AI page after a short delay
+        setTimeout(() => {
+          setCurrentPage('ai');
+          console.log(`🔄 Automatically switched to AI page`);
+        }, 1000);
+        
+      }, 500);
       
     } catch (error) {
       console.error('❌ AI Generation error:', error);
       alert(`Generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    } finally {
       setIsGenerating(false);
       setGenerationProgress({ current: 0, total: 0, currentMatch: '' });
     }

@@ -43,6 +43,13 @@ export function LoadingScreen({ progress }: LoadingScreenProps) {
           <Zap className="text-yellow-400" size={16} />
           Creating PhD-level betting analysis
         </p>
+        
+        {/* Auto-switch notice */}
+        <div className="bg-yellow-500/20 border border-yellow-400/30 rounded-lg p-3 mb-6">
+          <p className="text-yellow-200 text-sm font-medium">
+            ⚡ Will automatically switch to AI Prompts page when complete
+          </p>
+        </div>
 
         {/* Progress Bar */}
         <div className="mb-6">

@@ -485,7 +485,7 @@ Return a JSON array of matches, each containing:
          return;
        }
 
-       // Generate prompts for all matches
+              // Generate prompts for all matches
        console.log(`🎯 FINAL STEP: Calling onGenerate with ${validMatches.length} matches:`, validMatches);
        
        // Show user how many matches were found
@@ -493,20 +493,27 @@ Return a JSON array of matches, each containing:
          const matchList = validMatches.map((match, index) => `${index + 1}. ${match.teamA} vs ${match.teamB}`).join('\n');
          console.log(`📋 Matches found:\n${matchList}`);
          
-         // Show alert with match count
-         alert(`Found ${validMatches.length} matches:\n\n${matchList}\n\nGenerating prompts for all matches using MatchPromptGenerator...`);
+         // Show success message without blocking alert
+         console.log(`✅ Found ${validMatches.length} matches:\n${matchList}\n\nGenerating prompts for all matches...`);
          
          console.log(`✅ Final validated matches for generation: ${validMatches.length}`, validMatches);
          
          // Call onGenerate with the validated matches
          await onGenerate(validMatches, selectedSport, selectedImages);
+         
+         // Automatically close modal after successful generation
+         setTimeout(() => {
+           console.log(`🎉 Generation completed successfully! Closing modal...`);
+           onClose();
+         }, 1500);
+         
        } else {
          alert('No valid matches found. Please try with different images.');
        }
-      console.log(`✅ onGenerate completed successfully for ${validMatches.length} matches`);
-      
-      // Reset form
-      resetForm();
+       console.log(`✅ onGenerate completed successfully for ${validMatches.length} matches`);
+       
+       // Reset form
+       resetForm();
       
     } catch (error) {
       console.error('❌ Generation error:', error);
