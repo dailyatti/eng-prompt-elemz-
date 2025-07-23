@@ -20,7 +20,7 @@ function App() {
   const [prompts, setPrompts] = useLocalStorage<Prompt[]>('sports-betting-prompts', initialPrompts);
   const [aiPrompts, setAiPrompts] = useLocalStorage<Prompt[]>('ai-generated-prompts', []);
   const [darkMode, setDarkMode] = useLocalStorage<boolean>('dark-mode', false);
-  const { apiKey } = useApiKey();
+  const { apiKey, clearAll } = useApiKey();
   const { updateSuccessRate } = usePromptAnalytics();
   const [currentPage, setCurrentPage] = useState<'regular' | 'ai'>('regular');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -171,6 +171,9 @@ function App() {
       // Save current state
       saveCurrentState();
       
+      // Clear all localStorage data
+      clearAll();
+      
       // Reset ALL prompts to original state
       setPrompts(initialPrompts);
       setAiPrompts([]);
@@ -184,7 +187,7 @@ function App() {
       
       // Show success message
       setTimeout(() => {
-        alert('✅ Minden visszaállítva az eredeti állapotba!');
+        alert('✅ Minden visszaállítva az eredeti állapotba! (localStorage is törölve)');
       }, 100);
     }
   };

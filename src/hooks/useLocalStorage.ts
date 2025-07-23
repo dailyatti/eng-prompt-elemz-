@@ -47,6 +47,25 @@ export function useApiKey() {
     setIsValid(false);
   };
 
+  const clearAll = () => {
+    // Clear all localStorage data
+    try {
+      localStorage.removeItem('prompts');
+      localStorage.removeItem('ai-prompts');
+      localStorage.removeItem('search-term');
+      localStorage.removeItem('selected-category');
+      localStorage.removeItem('selected-sport');
+      localStorage.removeItem('selected-type');
+      localStorage.removeItem('show-favorites-only');
+      localStorage.removeItem('current-page');
+      localStorage.removeItem('previous-state');
+      localStorage.removeItem('openai-api-key');
+      console.log('✅ All localStorage data cleared');
+    } catch (error) {
+      console.error('❌ Error clearing localStorage:', error);
+    }
+  };
+
   // Validate on mount
   useEffect(() => {
     setIsValid(validateApiKey(apiKey));
@@ -57,6 +76,7 @@ export function useApiKey() {
     isValid,
     saveApiKey,
     clearApiKey,
+    clearAll,
     validateApiKey
   };
 }
