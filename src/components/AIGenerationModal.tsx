@@ -421,7 +421,9 @@ Return a JSON array of matches, each containing:
       }
 
              // Generate prompts for all matches
-       await onGenerate(validMatches, selectedSport, selectedImages);
+      console.log(`🎯 FINAL STEP: Calling onGenerate with ${validMatches.length} matches:`, validMatches);
+      await onGenerate(validMatches, selectedSport, selectedImages);
+      console.log(`✅ onGenerate completed successfully for ${validMatches.length} matches`);
       
       // Reset form
       resetForm();

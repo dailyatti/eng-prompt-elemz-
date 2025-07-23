@@ -203,6 +203,7 @@ function App() {
   };
 
   const handleAIGeneration = async (matches: any[], sport: string, images?: File[]) => {
+    console.log(`🎯 handleAIGeneration called with ${matches.length} matches:`, matches);
     setIsGenerating(true);
     setGenerationProgress({ current: 0, total: matches.length, currentMatch: '' });
     
@@ -245,6 +246,8 @@ function App() {
           await new Promise(resolve => setTimeout(resolve, 1000));
         }
       }
+      
+      console.log(`🎉 COMPLETED: Generated ${matches.length} prompts successfully`);
       
       // Switch to AI page after generation
       setCurrentPage('ai');
