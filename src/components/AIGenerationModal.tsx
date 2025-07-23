@@ -495,7 +495,7 @@ Return a JSON array of matches, each containing:
                 darkMode 
                   ? 'bg-gray-700 border-gray-600 text-white' 
                   : 'bg-white border-gray-300 text-gray-900'
-              } focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
+              } focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 hover:border-gray-400`}
             >
               <option value="">Choose a sport...</option>
               {sportsCategories.map((category) => (
@@ -504,6 +504,13 @@ Return a JSON array of matches, each containing:
                 </option>
               ))}
             </select>
+            {selectedSport && (
+              <p className={`text-sm mt-2 ${
+                darkMode ? 'text-green-400' : 'text-green-600'
+              }`}>
+                ✓ Selected: {sportsCategories.find(cat => cat.value === selectedSport)?.label}
+              </p>
+            )}
           </div>
 
           {/* Image Upload Section */}
