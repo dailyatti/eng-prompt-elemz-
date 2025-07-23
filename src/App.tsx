@@ -187,7 +187,7 @@ function App() {
       
       // Show success message
       setTimeout(() => {
-        alert('✅ Minden visszaállítva az eredeti állapotba! (localStorage is törölve)');
+        alert('✅ Minden visszaállítva az eredeti állapotba! (API kulcs megmaradt)');
       }, 100);
     }
   };

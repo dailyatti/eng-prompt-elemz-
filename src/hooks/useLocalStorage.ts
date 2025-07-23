@@ -48,7 +48,7 @@ export function useApiKey() {
   };
 
   const clearAll = () => {
-    // Clear all localStorage data
+    // Clear all localStorage data except API key
     try {
       localStorage.removeItem('prompts');
       localStorage.removeItem('ai-prompts');
@@ -59,8 +59,8 @@ export function useApiKey() {
       localStorage.removeItem('show-favorites-only');
       localStorage.removeItem('current-page');
       localStorage.removeItem('previous-state');
-      localStorage.removeItem('openai-api-key');
-      console.log('✅ All localStorage data cleared');
+      // Note: openai-api-key is NOT removed - user wants to keep it
+      console.log('✅ All localStorage data cleared (API key preserved)');
     } catch (error) {
       console.error('❌ Error clearing localStorage:', error);
     }
