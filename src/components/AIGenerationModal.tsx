@@ -499,8 +499,8 @@ Return a JSON array of matches, each containing:
             >
               <option value="">Choose a sport...</option>
               {sportsCategories.map((category) => (
-                <option key={category.value} value={category.value}>
-                  {category.label}
+                <option key={category.id} value={category.id}>
+                  {category.icon} {category.name}
                 </option>
               ))}
             </select>
@@ -508,7 +508,7 @@ Return a JSON array of matches, each containing:
               <p className={`text-sm mt-2 ${
                 darkMode ? 'text-green-400' : 'text-green-600'
               }`}>
-                ✓ Selected: {sportsCategories.find(cat => cat.value === selectedSport)?.label}
+                ✓ Selected: {sportsCategories.find(cat => cat.id === selectedSport)?.icon} {sportsCategories.find(cat => cat.id === selectedSport)?.name}
               </p>
             )}
           </div>
