@@ -84,17 +84,17 @@ export function AIGenerationModal({ isOpen, onClose, onGenerate, darkMode }: AIG
 
   const handleImageUpload = (file: File) => {
     if (file.type.startsWith('image/')) {
-      setSelectedImages(prev => [...prev, file]);
+      setSelectedImages((prev: File[]) => [...prev, file]);
     }
   };
 
   const handleMultipleImageUpload = (files: FileList) => {
     const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
-    setSelectedImages(prev => [...prev, ...imageFiles]);
+    setSelectedImages((prev: File[]) => [...prev, ...imageFiles]);
   };
 
   const removeImage = (index: number) => {
-    setSelectedImages(prev => prev.filter((_, i) => i !== index));
+    setSelectedImages((prev: File[]) => prev.filter((_: File, i: number) => i !== index));
   };
   
   const handleDrop = (e: React.DragEvent) => {
