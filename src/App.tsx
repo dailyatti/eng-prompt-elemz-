@@ -218,6 +218,7 @@ function App() {
 
   const handleAIGeneration = async (matches: any[], sport: string, images?: File[]) => {
     console.log(`🎯 handleAIGeneration called with ${matches.length} matches:`, matches);
+    console.log(`🔍 Detailed matches data:`, JSON.stringify(matches, null, 2));
     setIsGenerating(true);
     setGenerationProgress({ current: 0, total: matches.length, currentMatch: '' });
     
@@ -251,8 +252,12 @@ function App() {
           updatedAt: now,
         };
         
-        setAiPrompts(prev => [newPrompt, ...prev]);
-        console.log(`✅ Created prompt ${i + 1}: "${newPrompt.title}"`);
+        setAiPrompts(prev => {
+          const updated = [newPrompt, ...prev];
+          console.log(`✅ Created prompt ${i + 1}: "${newPrompt.title}"`);
+          console.log(`📊 Total AI prompts now: ${updated.length}`);
+          return updated;
+        });
         
         // Delay between generations
         if (i < matches.length - 1) {
@@ -262,6 +267,7 @@ function App() {
       }
       
       console.log(`🎉 COMPLETED: Generated ${matches.length} prompts successfully`);
+      console.log(`🔍 Final AI prompts state:`, aiPrompts);
       
       // Switch to AI page after generation
       setCurrentPage('ai');

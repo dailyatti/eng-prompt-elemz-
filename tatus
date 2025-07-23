@@ -1,0 +1,5 @@
+[33mad304e0[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Merge remote changes and complete searchTerm fix
+[33m8dbe506[m Fix searchTerm filtering and add comprehensive debugging
+[33mbdbd6ba[m Fix AI Generation Modal to show all sports
+[33m0275e29[m Add comprehensive debug logging for multiple match processing
+[33m74d0b1b[m Fix multiple match extraction with robust JSON parsing

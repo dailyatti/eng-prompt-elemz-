@@ -259,19 +259,24 @@ Return a JSON array of matches, each containing:
         // Extract JSON from response - multiple patterns
         let matches: any[] = [];
         
-        // Try to find JSON array first
-        const jsonArrayMatch = content.match(/\[[\s\S]*\]/);
+        console.log(`🔍 Attempting to parse JSON from response for image ${i + 1}`);
+        console.log(`📄 Raw response content:`, content);
+        
+        // Try to find JSON array first - more robust pattern
+        const jsonArrayMatch = content.match(/\[\s*\{[\s\S]*\}\s*\]/);
         if (jsonArrayMatch) {
           try {
             matches = JSON.parse(jsonArrayMatch[0]);
             console.log(`✅ Extracted ${matches.length} matches from JSON array for image ${i + 1}:`, matches);
           } catch (parseError) {
             console.error(`❌ JSON array parse error for image ${i + 1}:`, parseError);
+            console.log(`🔍 Failed JSON array content:`, jsonArrayMatch[0]);
           }
         }
         
-        // If no array found, try to find individual JSON objects
+        // If no array found, try to find individual JSON objects with more flexible pattern
         if (matches.length === 0) {
+          console.log(`🔍 Trying to find individual JSON objects...`);
           const jsonObjectMatches = content.match(/\{[^{}]*"teamA"[^{}]*\}/g);
           if (jsonObjectMatches) {
             try {
@@ -283,32 +288,71 @@ Return a JSON array of matches, each containing:
           }
         }
         
-        // If still no matches, try to extract from text
+        // Try to find any JSON-like structure
+        if (matches.length === 0) {
+          console.log(`🔍 Trying to find any JSON-like structure...`);
+          const allJsonMatches = content.match(/\{[^{}]*\}/g);
+          if (allJsonMatches) {
+            for (const jsonStr of allJsonMatches) {
+              try {
+                const parsed = JSON.parse(jsonStr);
+                if (parsed.teamA && parsed.teamB) {
+                  matches.push(parsed);
+                  console.log(`✅ Found valid match object:`, parsed);
+                }
+              } catch (e) {
+                // Skip invalid JSON
+              }
+            }
+            console.log(`✅ Extracted ${matches.length} matches from JSON-like structures for image ${i + 1}`);
+          }
+        }
+        
+        // If still no matches, try to extract from text with more patterns
         if (matches.length === 0) {
           console.warn(`⚠️ No JSON found in response for image ${i + 1}, trying text extraction`);
-          console.log('Raw content:', content);
           
-          // Try to extract team names from text
-          const teamMatches = content.match(/([A-Z][a-zA-Z\s]+)\s+vs\s+([A-Z][a-zA-Z\s]+)/g);
-          if (teamMatches) {
-            matches = teamMatches.map(match => {
-              const [teamA, teamB] = match.split(' vs ');
-              return {
-                teamA: teamA.trim(),
-                teamB: teamB.trim(),
-                matchDate: new Date().toISOString().split('T')[0],
-                odds: {}
-              };
-            });
-            console.log(`✅ Extracted ${matches.length} matches from text for image ${i + 1}:`, matches);
+          // Try multiple team name patterns
+          const teamPatterns = [
+            /([A-Z][a-zA-Z\s]+)\s+vs\s+([A-Z][a-zA-Z\s]+)/g,
+            /([A-Z][a-zA-Z\s]+)\s*-\s*([A-Z][a-zA-Z\s]+)/g,
+            /([A-Z][a-zA-Z\s]+)\s*@\s*([A-Z][a-zA-Z\s]+)/g
+          ];
+          
+          for (const pattern of teamPatterns) {
+            const teamMatches = content.match(pattern);
+            if (teamMatches) {
+              matches = teamMatches.map((match: string) => {
+                let teamA: string = 'Unknown Team A';
+                let teamB: string = 'Unknown Team B';
+                if (match.includes(' vs ')) {
+                  [teamA, teamB] = match.split(' vs ');
+                } else if (match.includes(' - ')) {
+                  [teamA, teamB] = match.split(' - ');
+                } else if (match.includes(' @ ')) {
+                  [teamA, teamB] = match.split(' @ ');
+                }
+                return {
+                  teamA: teamA.trim(),
+                  teamB: teamB.trim(),
+                  matchDate: new Date().toISOString().split('T')[0],
+                  odds: {}
+                };
+              });
+              console.log(`✅ Extracted ${matches.length} matches from text pattern for image ${i + 1}:`, matches);
+              break;
+            }
           }
         }
         
         // Add all found matches
         if (matches.length > 0) {
+          console.log(`🎯 Adding ${matches.length} matches from image ${i + 1} to total collection`);
           allMatches.push(...matches);
+          console.log(`📊 Total matches collected so far: ${allMatches.length}`);
         } else {
           console.error(`❌ No matches could be extracted from image ${i + 1}`);
+          console.log(`🔍 Full response content for debugging:`, content);
         }
 
       } catch (error) {
