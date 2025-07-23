@@ -495,7 +495,7 @@ Return a JSON array of matches, each containing:
                 darkMode 
                   ? 'bg-gray-700 border-gray-600 text-white' 
                   : 'bg-white border-gray-300 text-gray-900'
-              } focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent`}
+              } focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500`}
             >
               <option value="">Choose a sport...</option>
               {sportsCategories.map((category) => (
@@ -523,7 +523,7 @@ Return a JSON array of matches, each containing:
                 setDragOver(true);
               }}
               onDragLeave={() => setDragOver(false)}
-              className={`border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200 ${
+              className={`border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200 min-h-[200px] flex flex-col items-center justify-center ${
                 dragOver
                   ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 scale-[1.02]'
                   : darkMode
@@ -564,7 +564,7 @@ Return a JSON array of matches, each containing:
               >
                 Select Images
               </label>
-              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg w-full">
                 <p className={`text-xs ${
                   darkMode ? 'text-blue-300' : 'text-blue-700'
                 }`}>
