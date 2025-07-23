@@ -15,6 +15,7 @@ import { SearchBar } from './components/SearchBar';
 import { AIPromptPage } from './components/AIPromptPage';
 import { LoadingScreen } from './components/LoadingScreen';
 import { sportsCategories } from './data/sportsData';
+import { matchPromptGenerator, MatchData, GenerationProgress } from './utils/matchPromptGenerator';
 
 function App() {
   const [prompts, setPrompts] = useLocalStorage<Prompt[]>('sports-betting-prompts', initialPrompts);
@@ -232,71 +233,43 @@ function App() {
       return;
     }
     
-    // Create a map to ensure each match gets a prompt
-    const matchMap = new Map();
-    matches.forEach((match, index) => {
-      const key = `${match.teamA}_${match.teamB}_${match.matchDate || 'unknown'}`;
-      matchMap.set(key, { ...match, originalIndex: index });
-    });
-    
-    console.log(`🗺️ Created match map with ${matchMap.size} unique matches:`, Array.from(matchMap.keys()));
-    
     try {
-      // Use map to ensure each match gets processed
-      const uniqueMatches = Array.from(matchMap.values());
-      console.log(`🔄 Processing ${uniqueMatches.length} unique matches`);
+      // Convert matches to MatchData format and ensure all are processed
+      const matchDataArray: MatchData[] = matchPromptGenerator.ensureAllMatchesProcessed(matches);
       
-      for (let i = 0; i < uniqueMatches.length; i++) {
-        const match = uniqueMatches[i];
-        console.log(`⚙️ Generating prompt ${i + 1}/${uniqueMatches.length} for: ${match.teamA} vs ${match.teamB}`);
-        setGenerationProgress({ current: i + 1, total: uniqueMatches.length, currentMatch: `${match.teamA} vs ${match.teamB}` });
-        
-        const now = new Date().toISOString();
-        const promptContent = await generateMatchPrompt(match, sport);
-        
-        const newPrompt: Prompt = {
-          id: Math.random().toString(36).substr(2, 9),
-          title: `AI Generated: ${match.teamA} vs ${match.teamB}`,
-          content: promptContent,
-          sport,
-          category: 'traditional',
-          type: 'specific',
-          tags: ['AI Generated', 'Match Analysis', 'Complete Odds', images?.length ? `${images.length} Images` : 'Multi-Source'].filter(Boolean),
-          isFavorite: false,
-          usageCount: 0,
-          lastUsed: now,
-          successRate: 0,
-          totalBets: 0,
-          winningBets: 0,
-          roi: 0,
-          createdAt: now,
-          updatedAt: now,
-        };
-        
-        setAiPrompts(prev => {
-          const updated = [newPrompt, ...prev];
-          console.log(`✅ Created prompt ${i + 1}: "${newPrompt.title}"`);
-          console.log(`📊 Total AI prompts now: ${updated.length}`);
-          return updated;
-        });
-        
-        // Delay between generations
-        if (i < uniqueMatches.length - 1) {
-          console.log(`⏳ Waiting 1 second before next generation...`);
-          await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log(`🔍 Processed matches ready for generation: ${matchDataArray.length}`, matchDataArray);
+      
+      // Use the dedicated MatchPromptGenerator to generate prompts for ALL matches
+      const generatedPrompts = await matchPromptGenerator.generatePromptsForAllMatches(
+        matchDataArray,
+        sport,
+        (progress: GenerationProgress) => {
+          console.log(`📊 Progress: ${progress.current}/${progress.total} - ${progress.currentMatch}`);
+          setGenerationProgress(progress);
         }
-      }
+      );
       
-      console.log(`🎉 COMPLETED: Generated ${uniqueMatches.length} prompts successfully`);
+      console.log(`🎉 MatchPromptGenerator completed: Generated ${generatedPrompts.length} prompts`);
+      
+      // Add all generated prompts to the AI prompts list
+      setAiPrompts(prev => {
+        const updated = [...generatedPrompts, ...prev];
+        console.log(`📊 Total AI prompts after generation: ${updated.length}`);
+        return updated;
+      });
+      
+      console.log(`🎉 COMPLETED: Generated ${generatedPrompts.length} prompts successfully`);
       console.log(`🔍 Final AI prompts state:`, aiPrompts);
       
       // Switch to AI page after generation
       setCurrentPage('ai');
+      
     } catch (error) {
-      console.error('❌ AI Generation Error:', error);
-      console.error('AI Generation Error:', error);
+      console.error('❌ AI Generation error:', error);
+      alert(`Generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsGenerating(false);
+      setGenerationProgress({ current: 0, total: 0, currentMatch: '' });
     }
   };
 

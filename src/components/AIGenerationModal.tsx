@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Upload, Sparkles, Zap, Image as ImageIcon, Key, Loader2, Clipboard, Eye, EyeOff } from 'lucide-react';
 import { useApiKey } from '../hooks/useLocalStorage';
 import { sportsCategories } from '../data/sportsData';
+import { matchPromptGenerator, MatchData } from '../utils/matchPromptGenerator';
 
 interface AIGenerationModalProps {
   isOpen: boolean;
@@ -473,47 +474,35 @@ Return a JSON array of matches, each containing:
       const extractedMatches = await extractMatchesFromImages(base64Images, apiKey, selectedSport);
       console.log(`📊 Extracted ${extractedMatches.length} total matches from all images`);
       
-      // Validate and deduplicate
-      const validMatches = validateAndDeduplicateMatches(extractedMatches, selectedSport);
-      console.log(`✅ Final valid matches:`, validMatches);
-      
-      if (validMatches.length === 0) {
-        alert('No valid matches found in the uploaded images. Please try with different images.');
-        return;
-      }
+             // Use MatchPromptGenerator to validate and ensure all matches are processed
+       const matchDataArray: MatchData[] = matchPromptGenerator.ensureAllMatchesProcessed(extractedMatches);
+       const validMatches = matchPromptGenerator.validateMatches(matchDataArray);
+       
+       console.log(`✅ MatchPromptGenerator validated ${validMatches.length} matches:`, validMatches);
+       
+       if (validMatches.length === 0) {
+         alert('No valid matches found in the uploaded images. Please try with different images.');
+         return;
+       }
 
-             // Generate prompts for all matches
-      console.log(`🎯 FINAL STEP: Calling onGenerate with ${validMatches.length} matches:`, validMatches);
-      
-      // Show user how many matches were found
-      if (validMatches.length > 0) {
-        const matchList = validMatches.map((match, index) => `${index + 1}. ${match.teamA} vs ${match.teamB}`).join('\n');
-        console.log(`📋 Matches found:\n${matchList}`);
-        
-        // Show alert with match count
-        alert(`Found ${validMatches.length} matches:\n\n${matchList}\n\nGenerating prompts for all matches...`);
-        
-        // Ensure we have valid matches before calling onGenerate
-        const finalMatches = validMatches.filter(match => 
-          match && 
-          match.teamA && 
-          match.teamB && 
-          typeof match.teamA === 'string' && 
-          typeof match.teamB === 'string' &&
-          match.teamA.trim() !== '' && 
-          match.teamB.trim() !== ''
-        );
-        
-        console.log(`✅ Final validated matches for generation: ${finalMatches.length}`, finalMatches);
-        
-        if (finalMatches.length > 0) {
-          await onGenerate(finalMatches, selectedSport, selectedImages);
-        } else {
-          alert('No valid matches could be processed. Please try with different images.');
-        }
-      } else {
-        alert('No valid matches found. Please try with different images.');
-      }
+       // Generate prompts for all matches
+       console.log(`🎯 FINAL STEP: Calling onGenerate with ${validMatches.length} matches:`, validMatches);
+       
+       // Show user how many matches were found
+       if (validMatches.length > 0) {
+         const matchList = validMatches.map((match, index) => `${index + 1}. ${match.teamA} vs ${match.teamB}`).join('\n');
+         console.log(`📋 Matches found:\n${matchList}`);
+         
+         // Show alert with match count
+         alert(`Found ${validMatches.length} matches:\n\n${matchList}\n\nGenerating prompts for all matches using MatchPromptGenerator...`);
+         
+         console.log(`✅ Final validated matches for generation: ${validMatches.length}`, validMatches);
+         
+         // Call onGenerate with the validated matches
+         await onGenerate(validMatches, selectedSport, selectedImages);
+       } else {
+         alert('No valid matches found. Please try with different images.');
+       }
       console.log(`✅ onGenerate completed successfully for ${validMatches.length} matches`);
       
       // Reset form
