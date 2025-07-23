@@ -179,17 +179,26 @@ export function AIGenerationModal({ isOpen, onClose, onGenerate, darkMode }: AIG
       const image = base64Images[i];
       console.log(`📸 Processing image ${i + 1}/${base64Images.length}`);
       
-      const prompt = `Analyze this sports betting image and extract ALL matches and their odds data. Look for multiple matches if present.
+      const prompt = `CRITICAL: Analyze this sports betting image and extract ALL matches and their odds data. You MUST find and extract EVERY single match visible in the image.
 
 **SPORT:** ${sport}
 
-**EXTRACTION REQUIREMENTS:**
-1. Find ALL matches in the image (there may be multiple)
-2. Extract complete match data for each match
-3. Extract ALL available odds for each match
-4. Maintain data accuracy and completeness
+**CRITICAL EXTRACTION REQUIREMENTS:**
+1. 🔍 SCAN THE ENTIRE IMAGE - Look in every corner, section, and area
+2. 📋 FIND ALL MATCHES - There may be 1, 2, 3, 4, or more matches visible
+3. 📊 EXTRACT COMPLETE DATA - Get all match details and odds for each match
+4. ✅ DO NOT MISS ANY MATCHES - If you see multiple matches, extract ALL of them
 
-**MATCH DATA TO EXTRACT:**
+**VISUAL SCANNING INSTRUCTIONS:**
+- Look at the top, middle, and bottom of the image
+- Check all sections, tabs, or panels
+- Look for match lists, fixtures, or schedules
+- Check for multiple games, events, or competitions
+- Look for different leagues or tournaments
+- Check for live matches and upcoming matches
+- Look for any table format with multiple rows
+
+**MATCH DATA TO EXTRACT FOR EACH MATCH:**
 - Team A vs Team B
 - Match date and time
 - League/tournament name
@@ -197,7 +206,7 @@ export function AIGenerationModal({ isOpen, onClose, onGenerate, darkMode }: AIG
 - Current score (if live match)
 - Match status (if visible)
 
-**ODDS DATA TO EXTRACT:**
+**ODDS DATA TO EXTRACT FOR EACH MATCH:**
 - 1X2 odds (Home/Draw/Away)
 - Both Teams To Score (BTTS)
 - Over/Under goals (0.5, 1.5, 2.0, 2.5, 3.5)
@@ -224,7 +233,13 @@ Return a JSON array of matches, each containing:
   }
 }
 
-**IMPORTANT:** If multiple matches are visible, extract ALL of them. Return an array with each match as a separate object.`;
+**FINAL REMINDER:** 
+- If you see 1 match, return an array with 1 object
+- If you see 2 matches, return an array with 2 objects  
+- If you see 3 matches, return an array with 3 objects
+- If you see 4+ matches, return an array with ALL matches
+- NEVER return just 1 match if you can see more
+- ALWAYS return an array, even if only 1 match is found`;
 
       try {
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
