@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Upload, Sparkles, Zap, Image as ImageIcon, Key, Loader2, Clipboard, Eye, EyeOff } from 'lucide-react';
 import { useApiKey } from '../hooks/useLocalStorage';
+import { sportsCategories } from '../data/sportsData';
 
 interface AIGenerationModalProps {
   isOpen: boolean;
@@ -8,30 +9,6 @@ interface AIGenerationModalProps {
   onGenerate: (matches: any[], sport: string, images?: File[]) => void;
   darkMode?: boolean;
 }
-
-// Direct sports definition to avoid import issues
-const sportsList = [
-  { id: 'football', name: 'Football (Soccer)', icon: '⚽' },
-  { id: 'basketball', name: 'Basketball', icon: '🏀' },
-  { id: 'tennis', name: 'Tennis', icon: '🎾' },
-  { id: 'american-football', name: 'American Football', icon: '🏈' },
-  { id: 'hockey', name: 'Ice Hockey', icon: '🏒' },
-  { id: 'baseball', name: 'Baseball', icon: '⚾' },
-  { id: 'cricket', name: 'Cricket', icon: '🏏' },
-  { id: 'volleyball', name: 'Volleyball', icon: '🏐' },
-  { id: 'handball', name: 'Handball', icon: '🤾' },
-  { id: 'boxing', name: 'Boxing', icon: '🥊' },
-  { id: 'mma', name: 'MMA', icon: '🥋' },
-  { id: 'golf', name: 'Golf', icon: '⛳' },
-  { id: 'rugby', name: 'Rugby', icon: '🏉' },
-  { id: 'horse-racing', name: 'Horse Racing', icon: '🏇' },
-  { id: 'formula1', name: 'Formula 1', icon: '🏎️' },
-  { id: 'fifa', name: 'FIFA', icon: '🎮' },
-  { id: 'lol', name: 'League of Legends', icon: '🎮' },
-  { id: 'cs2', name: 'Counter-Strike 2', icon: '🎮' },
-  { id: 'valorant', name: 'Valorant', icon: '🎮' },
-  { id: 'dota2', name: 'Dota 2', icon: '🎮' },
-];
 
 export function AIGenerationModal({ isOpen, onClose, onGenerate, darkMode }: AIGenerationModalProps) {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
@@ -44,12 +21,8 @@ export function AIGenerationModal({ isOpen, onClose, onGenerate, darkMode }: AIG
   
   const { apiKey, isValid, saveApiKey, clearApiKey, validateApiKey } = useApiKey();
 
-  // Debug logging
-  console.log('sportsList:', sportsList);
-  console.log('sportsList length:', sportsList.length);
-
-  // Fallback sports if sportsCategories is empty
-  const availableSports = sportsList;
+  // Use complete sports list from sportsData
+  const availableSports = sportsCategories;
 
   // Handle clipboard paste
   React.useEffect(() => {
@@ -584,9 +557,9 @@ Return a JSON array of matches, each containing:
               } focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 hover:border-gray-400`}
             >
               <option value="">Choose a sport...</option>
-              {availableSports.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.icon} {category.name}
+              {availableSports.map((sport) => (
+                <option key={sport.id} value={sport.id}>
+                  {sport.icon} {sport.name}
                 </option>
               ))}
             </select>
@@ -594,7 +567,7 @@ Return a JSON array of matches, each containing:
               <p className={`text-sm mt-2 ${
                 darkMode ? 'text-green-400' : 'text-green-600'
               }`}>
-                ✓ Selected: {availableSports.find(cat => cat.id === selectedSport)?.icon} {availableSports.find(cat => cat.id === selectedSport)?.name}
+                ✓ Selected: {availableSports.find(sport => sport.id === selectedSport)?.icon} {availableSports.find(sport => sport.id === selectedSport)?.name}
               </p>
             )}
           </div>
