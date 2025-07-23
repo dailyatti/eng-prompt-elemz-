@@ -12,7 +12,7 @@ A comprehensive React TypeScript application that generates PhD-level sports bet
 - **Comprehensive Data Extraction**: Date, time, teams, league, venue, odds, and more
 
 ### Advanced Features
-- **Real-time AI Processing**: Uses OpenAI GPT-4 for intelligent prompt generation
+- **Real-time AI Processing**: Uses OpenAI GPT-4o for intelligent prompt generation
 - **Multi-Image Support**: Process multiple screenshots simultaneously
 - **Professional Analytics**: Track prompt usage, success rates, and ROI
 - **Export/Import System**: Backup and share prompt collections
@@ -23,7 +23,7 @@ A comprehensive React TypeScript application that generates PhD-level sports bet
 - **Frontend**: React 18 + TypeScript
 - **Styling**: Tailwind CSS + Custom animations
 - **Build Tool**: Vite
-- **AI Integration**: OpenAI GPT-4 API
+- **AI Integration**: OpenAI GPT-4o API
 - **State Management**: React Hooks + Local Storage
 - **Icons**: Lucide React
 - **Code Quality**: ESLint + Prettier
@@ -320,4 +320,4 @@ For support and questions:
 
 ---
 
-**Built with ❤️ using React, TypeScript, and OpenAI GPT-4** 
+**Built with ❤️ using React, TypeScript, and OpenAI GPT-4o** 
