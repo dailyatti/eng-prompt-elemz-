@@ -51,7 +51,7 @@ function App() {
     const term = searchTerm.trim().toLowerCase();
     const currentPrompts = currentPage === 'regular' ? prompts : aiPrompts;
     
-    const filtered = currentPrompts.filter(prompt => {
+    const filtered = currentPrompts.filter((prompt: Prompt) => {
       // Category filter
       if (selectedCategory !== 'all' && prompt.category !== selectedCategory) return false;
       
@@ -68,7 +68,7 @@ function App() {
       if (term) {
         const inTitle = prompt.title.toLowerCase().includes(term);
         const inContent = prompt.content.toLowerCase().includes(term);
-        const inTags = prompt.tags?.some(tag => tag.toLowerCase().includes(term));
+        const inTags = prompt.tags?.some((tag: string) => tag.toLowerCase().includes(term));
         if (!inTitle && !inContent && !inTags) return false;
       }
 
@@ -87,13 +87,13 @@ function App() {
     if (editingPrompt) {
       // Update existing prompt
       if (currentPage === 'regular') {
-        setPrompts(prompts.map(p => 
+        setPrompts(prompts.map((p: Prompt) => 
           p.id === editingPrompt.id 
             ? { ...promptData, id: editingPrompt.id, createdAt: editingPrompt.createdAt, updatedAt: now }
             : p
         ));
       } else {
-        setAiPrompts(aiPrompts.map(p => 
+        setAiPrompts(aiPrompts.map((p: Prompt) => 
           p.id === editingPrompt.id 
             ? { ...promptData, id: editingPrompt.id, createdAt: editingPrompt.createdAt, updatedAt: now }
             : p
@@ -132,9 +132,9 @@ function App() {
   const handleDeletePrompt = (id: string) => {
     if (window.confirm('Are you sure you want to delete this prompt?')) {
       if (currentPage === 'regular') {
-        setPrompts(prompts.filter(p => p.id !== id));
+        setPrompts(prompts.filter((p: Prompt) => p.id !== id));
       } else {
-        setAiPrompts(aiPrompts.filter(p => p.id !== id));
+                  setAiPrompts(aiPrompts.filter((p: Prompt) => p.id !== id));
       }
     }
   };
@@ -146,11 +146,11 @@ function App() {
 
   const handleToggleFavorite = (id: string) => {
     if (currentPage === 'regular') {
-      setPrompts(prompts.map(p => 
+      setPrompts(prompts.map((p: Prompt) => 
         p.id === id ? { ...p, isFavorite: !p.isFavorite } : p
       ));
     } else {
-      setAiPrompts(aiPrompts.map(p => 
+      setAiPrompts(aiPrompts.map((p: Prompt) => 
         p.id === id ? { ...p, isFavorite: !p.isFavorite } : p
       ));
     }

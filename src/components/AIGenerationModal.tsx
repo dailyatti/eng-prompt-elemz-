@@ -158,9 +158,12 @@ export function AIGenerationModal({ isOpen, onClose, onGenerate, darkMode }: AIG
 
 **CRITICAL EXTRACTION REQUIREMENTS:**
 1. 🔍 SCAN THE ENTIRE IMAGE - Look in every corner, section, and area
-2. 📋 FIND ALL MATCHES - There may be 1, 2, 3, 4, or more matches visible
+2. 📋 FIND ALL MATCHES - There may be 1, 2, 3, 4, 5, 6, or more matches visible
 3. 📊 EXTRACT COMPLETE DATA - Get all match details and odds for each match
 4. ✅ DO NOT MISS ANY MATCHES - If you see multiple matches, extract ALL of them
+5. 🔄 LOOK FOR SCROLLABLE CONTENT - Check if there are more matches below or above
+6. 📱 CHECK ALL SECTIONS - Look for tabs, categories, or different pages
+7. 🎯 BE THOROUGH - If you see ANY team names, create a match entry
 
 **VISUAL SCANNING INSTRUCTIONS:**
 - Look at the top, middle, and bottom of the image
@@ -271,6 +274,20 @@ Return a JSON array of matches, each containing:
           } catch (parseError) {
             console.error(`❌ JSON array parse error for image ${i + 1}:`, parseError);
             console.log(`🔍 Failed JSON array content:`, jsonArrayMatch[0]);
+            
+            // Try to fix common JSON issues
+            try {
+              let fixedJson = jsonArrayMatch[0]
+                .replace(/(\w+):/g, '"$1":') // Add quotes to keys
+                .replace(/'/g, '"') // Replace single quotes with double quotes
+                .replace(/,\s*}/g, '}') // Remove trailing commas
+                .replace(/,\s*]/g, ']'); // Remove trailing commas in arrays
+              
+              matches = JSON.parse(fixedJson);
+              console.log(`✅ Fixed and extracted ${matches.length} matches from JSON array for image ${i + 1}:`, matches);
+            } catch (fixError) {
+              console.error(`❌ JSON fix failed for image ${i + 1}:`, fixError);
+            }
           }
         }
         
@@ -316,7 +333,9 @@ Return a JSON array of matches, each containing:
           const teamPatterns = [
             /([A-Z][a-zA-Z\s]+)\s+vs\s+([A-Z][a-zA-Z\s]+)/g,
             /([A-Z][a-zA-Z\s]+)\s*-\s*([A-Z][a-zA-Z\s]+)/g,
-            /([A-Z][a-zA-Z\s]+)\s*@\s*([A-Z][a-zA-Z\s]+)/g
+            /([A-Z][a-zA-Z\s]+)\s*@\s*([A-Z][a-zA-Z\s]+)/g,
+            /([A-Z][a-zA-Z\s]+)\s+versus\s+([A-Z][a-zA-Z\s]+)/g,
+            /([A-Z][a-zA-Z\s]+)\s+vs\.\s+([A-Z][a-zA-Z\s]+)/g
           ];
           
           for (const pattern of teamPatterns) {
@@ -331,6 +350,10 @@ Return a JSON array of matches, each containing:
                   [teamA, teamB] = match.split(' - ');
                 } else if (match.includes(' @ ')) {
                   [teamA, teamB] = match.split(' @ ');
+                } else if (match.includes(' versus ')) {
+                  [teamA, teamB] = match.split(' versus ');
+                } else if (match.includes(' vs. ')) {
+                  [teamA, teamB] = match.split(' vs. ');
                 }
                 return {
                   teamA: teamA.trim(),
@@ -341,6 +364,28 @@ Return a JSON array of matches, each containing:
               });
               console.log(`✅ Extracted ${matches.length} matches from text pattern for image ${i + 1}:`, matches);
               break;
+            }
+          }
+          
+          // If still no matches, try to extract any team names mentioned
+          if (matches.length === 0) {
+            console.log(`🔍 Trying to extract any team names from text...`);
+            const teamNameMatches = content.match(/([A-Z][a-zA-Z\s]{2,20})/g);
+            if (teamNameMatches && teamNameMatches.length >= 2) {
+              // Create matches from any two consecutive team names
+              for (let j = 0; j < teamNameMatches.length - 1; j += 2) {
+                const teamA = teamNameMatches[j].trim();
+                const teamB = teamNameMatches[j + 1].trim();
+                if (teamA !== teamB && teamA.length > 2 && teamB.length > 2) {
+                  matches.push({
+                    teamA,
+                    teamB,
+                    matchDate: new Date().toISOString().split('T')[0],
+                    odds: {}
+                  });
+                }
+              }
+              console.log(`✅ Extracted ${matches.length} matches from team names for image ${i + 1}:`, matches);
             }
           }
         }
@@ -439,6 +484,16 @@ Return a JSON array of matches, each containing:
 
              // Generate prompts for all matches
       console.log(`🎯 FINAL STEP: Calling onGenerate with ${validMatches.length} matches:`, validMatches);
+      
+      // Show user how many matches were found
+      if (validMatches.length > 0) {
+        const matchList = validMatches.map((match, index) => `${index + 1}. ${match.teamA} vs ${match.teamB}`).join('\n');
+        console.log(`📋 Matches found:\n${matchList}`);
+        
+        // Show alert with match count
+        alert(`Found ${validMatches.length} matches:\n\n${matchList}\n\nGenerating prompts for all matches...`);
+      }
+      
       await onGenerate(validMatches, selectedSport, selectedImages);
       console.log(`✅ onGenerate completed successfully for ${validMatches.length} matches`);
       
