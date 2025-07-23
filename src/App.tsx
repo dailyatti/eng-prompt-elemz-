@@ -48,9 +48,10 @@ function App() {
   });
 
   const filteredPrompts = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
     const currentPrompts = currentPage === 'regular' ? prompts : aiPrompts;
     
-    return currentPrompts.filter(prompt => {
+    const filtered = currentPrompts.filter(prompt => {
       // Category filter
       if (selectedCategory !== 'all' && prompt.category !== selectedCategory) return false;
       
@@ -63,9 +64,22 @@ function App() {
       // Favorites filter
       if (showFavoritesOnly && !prompt.isFavorite) return false;
 
+      // Search term filter
+      if (term) {
+        const inTitle = prompt.title.toLowerCase().includes(term);
+        const inContent = prompt.content.toLowerCase().includes(term);
+        const inTags = prompt.tags?.some(tag => tag.toLowerCase().includes(term));
+        if (!inTitle && !inContent && !inTags) return false;
+      }
+
       return true;
     });
-  }, [prompts, aiPrompts, currentPage, selectedCategory, selectedSport, selectedType, showFavoritesOnly]);
+
+    console.log(`🔍 Filtering: ${currentPrompts.length} total prompts -> ${filtered.length} filtered prompts`);
+    console.log(`🔍 Search term: "${searchTerm}", Category: ${selectedCategory}, Sport: ${selectedSport}, Type: ${selectedType}, Favorites only: ${showFavoritesOnly}`);
+    
+    return filtered;
+  }, [prompts, aiPrompts, currentPage, selectedCategory, selectedSport, selectedType, showFavoritesOnly, searchTerm]);
 
   const handleSavePrompt = (promptData: Omit<Prompt, 'id' | 'createdAt' | 'updatedAt'>) => {
     const now = new Date().toISOString();

@@ -31,7 +31,9 @@ export function useLazyLoading<T>(
   }, [items.length, initialCount]);
 
   const visibleItems = useMemo(() => {
-    return items.slice(0, visibleCount);
+    const visible = items.slice(0, visibleCount);
+    console.log(`📱 LazyLoading: ${items.length} total items -> ${visibleCount} visible items`);
+    return visible;
   }, [items, visibleCount]);
 
   const hasMore = visibleCount < items.length;
