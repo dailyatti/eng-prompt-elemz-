@@ -71,44 +71,45 @@ export function AIPromptPage({
   return (
     <>
       {/* AI Page Header */}
-      <div className={`backdrop-blur-xl rounded-2xl shadow-2xl p-6 mb-8 transition-colors duration-300 ${
+      <div className={`backdrop-blur-xl rounded-xl sm:rounded-2xl shadow-2xl p-4 sm:p-6 mb-4 sm:mb-8 transition-colors duration-300 ${
         darkMode 
           ? 'bg-purple-900/20 border border-purple-700/30' 
           : 'bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200'
       }`}>
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl shadow-lg">
-              <Bot className="text-white" size={24} />
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4 sm:gap-0">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="p-2 sm:p-3 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg sm:rounded-xl shadow-lg">
+              <Bot className="text-white" size={20} className="sm:w-6 sm:h-6" />
             </div>
             <div>
-              <h2 className="text-2xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <h2 className="text-lg sm:text-2xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                 AI Generated Prompts
               </h2>
-              <p className={`font-semibold flex items-center gap-2 transition-colors duration-300 ${
+              <p className={`text-xs sm:text-sm font-semibold flex items-center gap-1 sm:gap-2 transition-colors duration-300 ${
                 darkMode ? 'text-gray-300' : 'text-gray-700'
               }`}>
-                <Sparkles className="text-yellow-500" size={14} />
-                Automatically created with GPT-4o Vision
+                <Sparkles className="text-yellow-500" size={12} className="sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Automatically created with GPT-4o Vision</span>
+                <span className="sm:hidden">GPT-4o Vision powered</span>
               </p>
             </div>
           </div>
-          <div className={`text-right transition-colors duration-300 ${
+          <div className={`text-center sm:text-right transition-colors duration-300 ${
             darkMode ? 'text-gray-300' : 'text-gray-700'
           }`}>
-            <div className="text-3xl font-black bg-gradient-to-br from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <div className="text-2xl sm:text-3xl font-black bg-gradient-to-br from-purple-600 to-pink-600 bg-clip-text text-transparent">
               {prompts.length}
             </div>
-            <div className="text-sm font-semibold">AI Prompts</div>
+            <div className="text-xs sm:text-sm font-semibold">AI Prompts</div>
           </div>
         </div>
         
         {/* AI Features */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className={`p-3 rounded-lg transition-colors duration-300 ${
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+          <div className={`p-2 sm:p-3 rounded-lg transition-colors duration-300 ${
             darkMode ? 'bg-blue-900/20' : 'bg-blue-100'
           }`}>
-            <div className={`text-sm font-semibold transition-colors duration-300 ${
+            <div className={`text-xs sm:text-sm font-semibold transition-colors duration-300 ${
               darkMode ? 'text-blue-300' : 'text-blue-800'
             }`}>
               📸 Image Recognition
@@ -116,13 +117,14 @@ export function AIPromptPage({
             <div className={`text-xs transition-colors duration-300 ${
               darkMode ? 'text-blue-400' : 'text-blue-600'
             }`}>
-              Extracts matches & odds from screenshots
+              <span className="hidden sm:inline">Extracts matches & odds from screenshots</span>
+              <span className="sm:hidden">Extracts match data</span>
             </div>
           </div>
-          <div className={`p-3 rounded-lg transition-colors duration-300 ${
+          <div className={`p-2 sm:p-3 rounded-lg transition-colors duration-300 ${
             darkMode ? 'bg-purple-900/20' : 'bg-purple-100'
           }`}>
-            <div className={`text-sm font-semibold transition-colors duration-300 ${
+            <div className={`text-xs sm:text-sm font-semibold transition-colors duration-300 ${
               darkMode ? 'text-purple-300' : 'text-purple-800'
             }`}>
               🧠 PhD-Level Analysis
@@ -130,13 +132,14 @@ export function AIPromptPage({
             <div className={`text-xs transition-colors duration-300 ${
               darkMode ? 'text-purple-400' : 'text-purple-600'
             }`}>
-              Professional betting frameworks
+              <span className="hidden sm:inline">Professional betting frameworks</span>
+              <span className="sm:hidden">Pro frameworks</span>
             </div>
           </div>
-          <div className={`p-3 rounded-lg transition-colors duration-300 ${
+          <div className={`p-2 sm:p-3 rounded-lg transition-colors duration-300 ${
             darkMode ? 'bg-green-900/20' : 'bg-green-100'
           }`}>
-            <div className={`text-sm font-semibold transition-colors duration-300 ${
+            <div className={`text-xs sm:text-sm font-semibold transition-colors duration-300 ${
               darkMode ? 'text-green-300' : 'text-green-800'
             }`}>
               ⚡ Multi-Match Support
@@ -144,7 +147,8 @@ export function AIPromptPage({
             <div className={`text-xs transition-colors duration-300 ${
               darkMode ? 'text-green-400' : 'text-green-600'
             }`}>
-              Separate prompts for each match
+              <span className="hidden sm:inline">Separate prompts for each match</span>
+              <span className="sm:hidden">Multi-match prompts</span>
             </div>
           </div>
         </div>
@@ -176,8 +180,8 @@ export function AIPromptPage({
       />
 
       {/* Results Count */}
-      <div className="mb-8 animate-fade-in-up">
-        <p className={`text-base sm:text-lg font-semibold transition-colors duration-300 ${
+      <div className="mb-4 sm:mb-8 animate-fade-in-up">
+        <p className={`text-sm sm:text-lg font-semibold transition-colors duration-300 ${
           darkMode ? 'text-gray-300' : 'text-gray-700'
         }`}>
           Showing <span className="font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{filteredPrompts.length}</span> 
@@ -191,8 +195,8 @@ export function AIPromptPage({
 
       {/* AI Prompts Grid */}
       {filteredPrompts.length === 0 ? (
-        <div className="text-center py-20 animate-fade-in-up">
-          <div className={`backdrop-blur-xl rounded-3xl shadow-2xl p-16 hover-lift mx-4 sm:mx-0 transition-colors duration-300 ${
+        <div className="text-center py-8 sm:py-20 animate-fade-in-up">
+          <div className={`backdrop-blur-xl rounded-xl sm:rounded-3xl shadow-2xl p-6 sm:p-16 hover-lift mx-2 sm:mx-0 transition-colors duration-300 ${
             darkMode 
               ? 'bg-gray-800/90 border border-gray-700/30' 
               : 'bg-white/90 border border-white/30'

@@ -565,3 +565,269 @@ body {
   width: 300px;
   height: 300px;
 }
+
+/* Mobile-specific improvements */
+@media (max-width: 640px) {
+  /* Better touch targets for mobile */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Improved spacing for mobile */
+  .card {
+    @apply mx-1;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* Reduce animations on mobile for better performance */
+  .animate-float {
+    animation: none;
+  }
+  
+  .animate-glow {
+    animation: none;
+  }
+  
+  .animate-pulse-slow {
+    animation: none;
+  }
+  
+  /* Better backdrop blur for mobile */
+  .backdrop-blur-xl {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  
+  /* Improved text sizing for mobile */
+  .text-xs {
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+  
+  /* Better button spacing */
+  .btn-primary,
+  .btn-success,
+  .btn-warning,
+  .btn-error {
+    @apply py-3 px-4 text-sm;
+  }
+  
+  /* Improved input sizing */
+  .input-modern {
+    @apply py-3 px-4 text-sm;
+  }
+  
+  /* Better modal spacing */
+  .modal-content {
+    @apply mx-4 my-4;
+  }
+  
+  /* Improved grid spacing */
+  .grid {
+    gap: 1rem;
+  }
+  
+  /* Better shadow for mobile */
+  .shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Improved border radius for mobile */
+  .rounded-xl {
+    border-radius: 0.75rem;
+  }
+  
+  .rounded-2xl {
+    border-radius: 1rem;
+  }
+  
+  /* Better padding for mobile */
+  .p-3 {
+    padding: 0.75rem;
+  }
+  
+  .p-4 {
+    padding: 1rem;
+  }
+  
+  .p-6 {
+    padding: 1.5rem;
+  }
+  
+  /* Improved margins for mobile */
+  .mb-4 {
+    margin-bottom: 1rem;
+  }
+  
+  .mb-6 {
+    margin-bottom: 1.5rem;
+  }
+  
+  .mb-8 {
+    margin-bottom: 2rem;
+  }
+  
+  /* Better gap spacing */
+  .gap-2 {
+    gap: 0.5rem;
+  }
+  
+  .gap-3 {
+    gap: 0.75rem;
+  }
+  
+  .gap-4 {
+    gap: 1rem;
+  }
+  
+  /* Improved text truncation */
+  .truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* Better scrollbar for mobile */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  
+  /* Improved focus states for mobile */
+  button:focus,
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+  
+  /* Better loading states */
+  .loading-skeleton {
+    animation: shimmer 1.5s infinite;
+  }
+  
+  /* Improved hover states for touch devices */
+  @media (hover: none) {
+    .hover-lift:hover {
+      transform: none;
+    }
+    
+    .hover-scale:hover {
+      transform: none;
+    }
+    
+    .hover-glow:hover {
+      box-shadow: none;
+    }
+  }
+}
+
+/* Tablet improvements */
+@media (min-width: 641px) and (max-width: 1024px) {
+  /* Better spacing for tablets */
+  .card {
+    @apply mx-2;
+  }
+  
+  /* Improved text sizing */
+  .text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+  
+  /* Better button sizing */
+  .btn-primary,
+  .btn-success,
+  .btn-warning,
+  .btn-error {
+    @apply py-3 px-6 text-base;
+  }
+  
+  /* Improved grid layout */
+  .grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* High DPI display improvements */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* Sharper text rendering */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  
+  /* Better image rendering */
+  img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Landscape mobile improvements */
+@media (max-width: 640px) and (orientation: landscape) {
+  /* Reduced padding for landscape */
+  .p-6 {
+    padding: 1rem;
+  }
+  
+  .py-8 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+  
+  /* Better header sizing */
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  /* Improved button sizing */
+  .btn-primary,
+  .btn-success,
+  .btn-warning,
+  .btn-error {
+    @apply py-2 px-4 text-sm;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .animate-float,
+  .animate-glow,
+  .animate-pulse-slow {
+    animation: none !important;
+  }
+}
+
+/* Dark mode mobile improvements */
+@media (max-width: 640px) {
+  .dark .card {
+    @apply bg-gray-800 border-gray-700;
+  }
+  
+  .dark .input-modern {
+    @apply bg-gray-800 border-gray-600 text-white placeholder-gray-400;
+  }
+  
+  .dark .input-modern:focus {
+    @apply border-blue-400 ring-blue-400/20;
+  }
+  
+  .dark button:focus {
+    outline-color: #60a5fa;
+  }
+}

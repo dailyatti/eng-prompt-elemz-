@@ -772,18 +772,110 @@ Create a PhD-level, professional NBA/basketball betting analysis prompt.
           ? 'bg-gray-900/90 border-b border-gray-700/30' 
           : 'bg-white/90 border-b border-white/30'
       }`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between animate-fade-in-down space-y-4 lg:space-y-0">
-            <div className="flex items-center space-x-3 sm:space-x-6">
-              <div className="relative p-2 sm:p-4 bg-gradient-to-br from-blue-600 via-purple-600 to-emerald-600 rounded-xl sm:rounded-2xl shadow-2xl animate-glow">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
+          {/* Mobile Header */}
+          <div className="block lg:hidden">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <div className="relative p-2 bg-gradient-to-br from-blue-600 via-purple-600 to-emerald-600 rounded-xl shadow-2xl animate-glow">
+                  <Trophy className="text-white" size={20} />
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-pulse shadow-lg"></div>
+                </div>
+                <div>
+                  <h1 className="text-lg font-black bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 bg-clip-text text-transparent leading-tight">
+                    Sports Betting Prompts
+                  </h1>
+                  <p className={`text-xs font-semibold flex items-center gap-1 transition-colors duration-300 ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    <Sparkles className="text-yellow-500" size={12} />
+                    PhD-level analysis
+                  </p>
+                </div>
+              </div>
+              
+              {/* Dark Mode Toggle - Mobile */}
+              <button
+                onClick={() => setDarkMode(!darkMode)}
+                className={`p-2 rounded-lg transition-all duration-300 hover:scale-110 shadow-lg ${
+                  darkMode 
+                    ? 'bg-yellow-500 text-white hover:bg-yellow-400' 
+                    : 'bg-gray-800 text-white hover:bg-gray-700'
+                }`}
+                title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              >
+                {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+              </button>
+            </div>
+            
+            {/* Page Navigation - Mobile */}
+            <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1 mb-4">
+              <button
+                onClick={() => {
+                  saveCurrentState();
+                  setCurrentPage('regular');
+                }}
+                className={`flex-1 px-3 py-2 rounded-md font-semibold text-sm transition-all ${
+                  currentPage === 'regular'
+                    ? 'bg-white dark:bg-gray-700 text-blue-600 shadow-md'
+                    : 'text-gray-600 dark:text-gray-300 hover:text-blue-600'
+                }`}
+              >
+                Regular
+              </button>
+              <button
+                onClick={() => {
+                  saveCurrentState();
+                  setCurrentPage('ai');
+                }}
+                className={`flex-1 px-3 py-2 rounded-md font-semibold text-sm transition-all flex items-center justify-center gap-1 ${
+                  currentPage === 'ai'
+                    ? 'bg-white dark:bg-gray-700 text-purple-600 shadow-md'
+                    : 'text-gray-600 dark:text-gray-300 hover:text-purple-600'
+                }`}
+              >
+                <Bot size={14} />
+                AI ({stats.aiGenerated})
+              </button>
+            </div>
+            
+            {/* Mobile Stats */}
+            <div className="grid grid-cols-4 gap-2 mb-4">
+              <div className="text-center">
+                <div className="text-lg font-black bg-gradient-to-br from-blue-600 to-blue-800 bg-clip-text text-transparent">{stats.total}</div>
+                <div className="text-xs text-gray-600 font-semibold">Total</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg font-black bg-gradient-to-br from-red-600 to-pink-700 bg-clip-text text-transparent">{stats.favorites}</div>
+                <div className="text-xs text-gray-600 font-semibold">Fav</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg font-black bg-gradient-to-br from-purple-600 to-violet-700 bg-clip-text text-transparent">{stats.aiGenerated}</div>
+                <div className={`text-xs font-semibold transition-colors duration-300 ${
+                  darkMode ? 'text-gray-400' : 'text-gray-600'
+                }`}>AI</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg font-black bg-gradient-to-br from-emerald-600 to-emerald-700 bg-clip-text text-transparent">{stats.traditional}</div>
+                <div className={`text-xs font-semibold transition-colors duration-300 ${
+                  darkMode ? 'text-gray-400' : 'text-gray-600'
+                }`}>Trad</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop Header */}
+          <div className="hidden lg:flex lg:flex-row lg:items-center lg:justify-between animate-fade-in-down space-y-4 lg:space-y-0">
+            <div className="flex items-center space-x-6">
+              <div className="relative p-4 bg-gradient-to-br from-blue-600 via-purple-600 to-emerald-600 rounded-2xl shadow-2xl animate-glow">
                 <Trophy className="text-white" size={24} />
                 <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full animate-pulse shadow-lg"></div>
               </div>
               <div>
-                <h1 className="text-xl sm:text-2xl lg:text-4xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 bg-clip-text text-transparent leading-tight">
+                <h1 className="text-4xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 bg-clip-text text-transparent leading-tight">
                   Sports Betting Prompt Manager
                 </h1>
-                <p className={`mt-1 sm:mt-2 text-sm sm:text-base lg:text-lg font-semibold flex items-center gap-2 transition-colors duration-300 ${
+                <p className={`mt-2 text-lg font-semibold flex items-center gap-2 transition-colors duration-300 ${
                   darkMode ? 'text-gray-300' : 'text-gray-700'
                 }`}>
                   <Sparkles className="text-yellow-500" size={16} />
@@ -792,7 +884,7 @@ Create a PhD-level, professional NBA/basketball betting analysis prompt.
               </div>
             </div>
             
-            {/* Page Navigation & Dark Mode Toggle */}
+            {/* Page Navigation - Desktop */}
             <div className="flex items-center gap-4">
               <div className="flex bg-gray-100 dark:bg-gray-800 rounded-xl p-1">
                 <button
@@ -825,87 +917,81 @@ Create a PhD-level, professional NBA/basketball betting analysis prompt.
               </div>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-3 sm:grid-cols-7 lg:flex lg:items-center gap-3 sm:gap-4 lg:gap-8">
+            {/* Stats - Desktop */}
+            <div className="flex items-center gap-8">
               <div className="text-center group hover-scale">
-                <div className="text-lg sm:text-2xl lg:text-3xl font-black bg-gradient-to-br from-blue-600 to-blue-800 bg-clip-text text-transparent">{stats.total}</div>
-                <div className="text-xs sm:text-sm text-gray-600 font-semibold flex items-center justify-center gap-1">
-                  <BarChart3 size={12} className="hidden sm:block" />
-                  <span className="hidden sm:inline">Total</span>
-                  <span className="sm:hidden">All</span>
+                <div className="text-3xl font-black bg-gradient-to-br from-blue-600 to-blue-800 bg-clip-text text-transparent">{stats.total}</div>
+                <div className="text-sm text-gray-600 font-semibold flex items-center justify-center gap-1">
+                  <BarChart3 size={12} />
+                  Total
                 </div>
               </div>
               <div className="text-center group hover-scale">
-                <div className="text-lg sm:text-2xl lg:text-3xl font-black bg-gradient-to-br from-red-600 to-pink-700 bg-clip-text text-transparent">{stats.favorites}</div>
-                <div className="text-xs sm:text-sm text-gray-600 font-semibold flex items-center justify-center gap-1">
-                  <Heart size={12} className="hidden sm:block" />
-                  <span className="hidden sm:inline">Favorites</span>
-                  <span className="sm:hidden">Fav</span>
+                <div className="text-3xl font-black bg-gradient-to-br from-red-600 to-pink-700 bg-clip-text text-transparent">{stats.favorites}</div>
+                <div className="text-sm text-gray-600 font-semibold flex items-center justify-center gap-1">
+                  <Heart size={12} />
+                  Favorites
                 </div>
               </div>
               <div className="text-center group hover-scale">
-                <div className="text-lg sm:text-2xl lg:text-3xl font-black bg-gradient-to-br from-purple-600 to-violet-700 bg-clip-text text-transparent">{stats.aiGenerated}</div>
-                <div className={`text-xs sm:text-sm font-semibold flex items-center justify-center gap-1 transition-colors duration-300 ${
+                <div className="text-3xl font-black bg-gradient-to-br from-purple-600 to-violet-700 bg-clip-text text-transparent">{stats.aiGenerated}</div>
+                <div className={`text-sm font-semibold flex items-center justify-center gap-1 transition-colors duration-300 ${
                   darkMode ? 'text-gray-400' : 'text-gray-600'
                 }`}>
-                  <Bot size={12} className="hidden sm:block" />
-                  <span className="hidden sm:inline">AI Generated</span>
-                  <span className="sm:hidden">AI</span>
+                  <Bot size={12} />
+                  AI Generated
                 </div>
               </div>
               <div className="text-center group hover-scale">
-                <div className="text-lg sm:text-2xl lg:text-3xl font-black bg-gradient-to-br from-emerald-600 to-emerald-700 bg-clip-text text-transparent">{stats.traditional}</div>
-                <div className={`text-xs sm:text-sm font-semibold flex items-center justify-center gap-1 transition-colors duration-300 ${
+                <div className="text-3xl font-black bg-gradient-to-br from-emerald-600 to-emerald-700 bg-clip-text text-transparent">{stats.traditional}</div>
+                <div className={`text-sm font-semibold flex items-center justify-center gap-1 transition-colors duration-300 ${
                   darkMode ? 'text-gray-400' : 'text-gray-600'
                 }`}>
-                  <Trophy size={12} className="hidden sm:block" />
-                  <span className="hidden sm:inline">Traditional</span>
-                  <span className="sm:hidden">Trad</span>
+                  <Trophy size={12} />
+                  Traditional
                 </div>
               </div>
               <div className="text-center group hover-scale">
-                <div className="text-lg sm:text-2xl lg:text-3xl font-black bg-gradient-to-br from-orange-600 to-red-600 bg-clip-text text-transparent">{stats.racing}</div>
-                <div className={`text-xs sm:text-sm font-semibold flex items-center justify-center gap-1 transition-colors duration-300 ${
+                <div className="text-3xl font-black bg-gradient-to-br from-orange-600 to-red-600 bg-clip-text text-transparent">{stats.racing}</div>
+                <div className={`text-sm font-semibold flex items-center justify-center gap-1 transition-colors duration-300 ${
                   darkMode ? 'text-gray-400' : 'text-gray-600'
                 }`}>
-                  <Target size={12} className="hidden sm:block" />
+                  <Target size={12} />
                   Racing
                 </div>
               </div>
               <div className="text-center group hover-scale">
-                <div className="text-lg sm:text-2xl lg:text-3xl font-black bg-gradient-to-br from-purple-600 to-violet-700 bg-clip-text text-transparent">{stats.esports}</div>
-                <div className={`text-xs sm:text-sm font-semibold flex items-center justify-center gap-1 transition-colors duration-300 ${
+                <div className="text-3xl font-black bg-gradient-to-br from-purple-600 to-violet-700 bg-clip-text text-transparent">{stats.esports}</div>
+                <div className={`text-sm font-semibold flex items-center justify-center gap-1 transition-colors duration-300 ${
                   darkMode ? 'text-gray-400' : 'text-gray-600'
                 }`}>
-                  <Zap size={12} className="hidden sm:block" />
+                  <Zap size={12} />
                   Esports
                 </div>
               </div>
               <div className="text-center group hover-scale">
-                <div className="text-lg sm:text-2xl lg:text-3xl font-black bg-gradient-to-br from-cyan-600 to-teal-700 bg-clip-text text-transparent">{stats.general}</div>
-                <div className={`text-xs sm:text-sm font-semibold flex items-center justify-center gap-1 transition-colors duration-300 ${
+                <div className="text-3xl font-black bg-gradient-to-br from-cyan-600 to-teal-700 bg-clip-text text-transparent">{stats.general}</div>
+                <div className={`text-sm font-semibold flex items-center justify-center gap-1 transition-colors duration-300 ${
                   darkMode ? 'text-gray-400' : 'text-gray-600'
                 }`}>
-                  <TrendingUp size={12} className="hidden sm:block" />
-                  <span className="hidden sm:inline">EV Scanners</span>
-                  <span className="sm:hidden">EV</span>
+                  <TrendingUp size={12} />
+                  EV Scanners
                 </div>
               </div>
               <div className="text-center group hover-scale">
-                <div className="text-lg sm:text-2xl lg:text-3xl font-black bg-gradient-to-br from-violet-600 to-purple-700 bg-clip-text text-transparent">{stats.specific}</div>
-                <div className={`text-xs sm:text-sm font-semibold flex items-center justify-center gap-1 transition-colors duration-300 ${
+                <div className="text-3xl font-black bg-gradient-to-br from-violet-600 to-purple-700 bg-clip-text text-transparent">{stats.specific}</div>
+                <div className={`text-sm font-semibold flex items-center justify-center gap-1 transition-colors duration-300 ${
                   darkMode ? 'text-gray-400' : 'text-gray-600'
                 }`}>
-                  <Award size={12} className="hidden sm:block" />
-                  <span className="hidden sm:inline">Match Analysis</span>
-                  <span className="sm:hidden">Match</span>
+                  <Award size={12} />
+                  Match Analysis
                 </div>
               </div>
             </div>
           </div>
           
-          {/* Dark Mode Toggle - Top Right Corner */}
-          <div className="absolute top-6 right-6">
+          {/* Dark Mode Toggle - Desktop */}
+          <div className="hidden lg:block absolute top-6 right-6">
             <button
               onClick={() => setDarkMode(!darkMode)}
               className={`p-3 rounded-xl transition-all duration-300 hover:scale-110 shadow-lg ${
@@ -922,7 +1008,7 @@ Create a PhD-level, professional NBA/basketball betting analysis prompt.
       </div>
 
       {/* Main Content */}
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+      <div className="relative max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 lg:py-12">
         {currentPage === 'ai' ? (
           <AIPromptPage
             prompts={aiPrompts}
@@ -976,8 +1062,8 @@ Create a PhD-level, professional NBA/basketball betting analysis prompt.
         />
 
         {/* Results Count */}
-        <div className="mb-6 sm:mb-8 animate-fade-in-up">
-          <p className={`text-base sm:text-lg font-semibold transition-colors duration-300 ${
+        <div className="mb-4 sm:mb-8 animate-fade-in-up">
+          <p className={`text-sm sm:text-lg font-semibold transition-colors duration-300 ${
             darkMode ? 'text-gray-300' : 'text-gray-700'
           }`}>
             Showing <span className="font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{visibleCount}</span> 
@@ -989,24 +1075,24 @@ Create a PhD-level, professional NBA/basketball betting analysis prompt.
 
         {/* Prompts Grid */}
         {totalCount === 0 ? (
-          <div className="text-center py-12 sm:py-16 lg:py-20 animate-fade-in-up">
-            <div className={`backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl p-8 sm:p-12 lg:p-16 hover-lift mx-4 sm:mx-0 transition-colors duration-300 ${
+          <div className="text-center py-8 sm:py-16 lg:py-20 animate-fade-in-up">
+            <div className={`backdrop-blur-xl rounded-xl sm:rounded-3xl shadow-2xl p-6 sm:p-12 lg:p-16 hover-lift mx-2 sm:mx-0 transition-colors duration-300 ${
               darkMode 
                 ? 'bg-gray-800/90 border border-gray-700/30' 
                 : 'bg-white/90 border border-white/30'
             }`}>
-              <div className="relative mb-6">
-                <Trophy className={`mx-auto animate-float transition-colors duration-300 ${
+              <div className="relative mb-4 sm:mb-6">
+                <Trophy className={`mx-auto animate-float transition-colors duration-300 sm:w-15 sm:h-15 ${
                   darkMode ? 'text-gray-600' : 'text-gray-400'
-                }`} size={60} />
-                <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full animate-pulse shadow-lg"></div>
+                }`} size={48} />
+                <div className="absolute -top-2 -right-2 w-4 h-4 sm:w-6 sm:h-6 bg-yellow-400 rounded-full animate-pulse shadow-lg"></div>
               </div>
-              <h3 className={`text-xl sm:text-2xl font-bold mb-4 transition-colors duration-300 ${
+              <h3 className={`text-lg sm:text-2xl font-bold mb-3 sm:mb-4 transition-colors duration-300 ${
                 darkMode ? 'text-gray-100' : 'text-gray-900'
               }`}>
                 No prompts found
               </h3>
-              <p className={`mb-6 sm:mb-8 text-base sm:text-lg font-medium transition-colors duration-300 ${
+              <p className={`mb-4 sm:mb-8 text-sm sm:text-lg font-medium transition-colors duration-300 ${
                 darkMode ? 'text-gray-300' : 'text-gray-700'
               }`}>
                 {selectedCategory !== 'all' || selectedSport !== 'all' || selectedType !== 'all'
@@ -1017,14 +1103,14 @@ Create a PhD-level, professional NBA/basketball betting analysis prompt.
                 onClick={handleAddNew}
                 className="btn-success ripple micro-bounce"
               >
-                <Sparkles className="inline mr-2" size={20} />
+                <Sparkles className="inline mr-2 sm:w-5 sm:h-5" size={18} />
                 Add Your First Prompt
               </button>
             </div>
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8 lg:gap-10">
               {visiblePrompts.map((prompt) => (
                 <PromptCard
                 key={prompt.id}
@@ -1042,12 +1128,12 @@ Create a PhD-level, professional NBA/basketball betting analysis prompt.
             {hasMore && (
               <div 
                 ref={loadMoreRef}
-                className="text-center mt-12 animate-fade-in-up"
+                className="text-center mt-8 sm:mt-12 animate-fade-in-up"
               >
                 {isLoadingMore ? (
-                  <div className="flex items-center justify-center gap-3">
-                    <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                    <span className={`font-medium transition-colors duration-300 ${
+                  <div className="flex items-center justify-center gap-2 sm:gap-3">
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                    <span className={`text-sm sm:text-base font-medium transition-colors duration-300 ${
                       darkMode ? 'text-gray-300' : 'text-gray-700'
                     }`}>
                       Loading more prompts...
@@ -1056,13 +1142,14 @@ Create a PhD-level, professional NBA/basketball betting analysis prompt.
                 ) : (
                   <button
                     onClick={loadMore}
-                    className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-3 mx-auto"
+                    className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 sm:gap-3 mx-auto text-sm sm:text-base"
                   >
-                    <Sparkles size={20} />
-                    Load More Prompts ({totalCount - visibleCount} remaining)
+                    <Sparkles size={18} />
+                    <span className="hidden sm:inline">Load More Prompts ({totalCount - visibleCount} remaining)</span>
+                    <span className="sm:hidden">Load More ({totalCount - visibleCount})</span>
                   </button>
                 )}
-                <p className={`mt-3 text-sm font-medium transition-colors duration-300 ${
+                <p className={`mt-2 sm:mt-3 text-xs sm:text-sm font-medium transition-colors duration-300 ${
                   darkMode ? 'text-gray-400' : 'text-gray-600'
                 }`}>
                   Showing {visibleCount} of {totalCount} prompts
